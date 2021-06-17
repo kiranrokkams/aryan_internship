@@ -1,0 +1,8 @@
+06-01-2021 07:10:10 - WARNING - tigerml.core.dataframe.dataframe::convert_datetimes::191 - TigerML warning: Please pass a dict, with column names as key and their format in the .csv file
+		(Note: The format displayed in .xlsx file may not be same as that present in .csv) as values,
+		to format_dict argument to perform correct conversion. 
+		Eg: df = df.convert_datetimes(format_dict={'Col_1':'%d-%m-%Y', Col_2':'%I:%M:%S %p'})
+06-01-2021 07:14:32 - WARNING - tigerml.core.dataframe.dataframe::convert_datetimes::191 - TigerML warning: Please pass a dict, with column names as key and their format in the .csv file
+		(Note: The format displayed in .xlsx file may not be same as that present in .csv) as values,
+		to format_dict argument to perform correct conversion. 
+		Eg: df = df.convert_datetimes(format_dict={'Col_1':'%d-%m-%Y', Col_2':'%I:%M:%S %p'})

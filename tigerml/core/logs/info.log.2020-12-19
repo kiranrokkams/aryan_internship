@@ -1,0 +1,4 @@
+19-12-2020 11:10:38 - INFO - tigerml.core.preprocessing.base::_clean_data::278 - Cleaning data
+19-12-2020 11:10:38 - INFO - tigerml.core.preprocessing.base::_impute_na::184 - No missing values
+19-12-2020 11:10:38 - INFO - tigerml.core.preprocessing.base::_drop_inf::204 - No Infinity values
+19-12-2020 11:10:38 - INFO - tigerml.core.preprocessing.base::_encode_non_numeric::242 - No categorical variables in the data

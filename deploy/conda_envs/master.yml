@@ -1,0 +1,215 @@
+core:
+  common-os:
+    channels:
+      - defaults
+      - conda-forge
+    dependencies:
+      - great-expectations==0.13.4
+      - category_encoders==2.2.2 # sklearn compatable category encoding (feature engineering)
+      - datashader==0.11.1
+      - fsspec==0.7.4 # access to cloud storage like s3, adls, google storage
+      - param==1.9.3
+      - panel==0.9.7
+      - bokeh==2.2.3
+      - holoviews==1.13.4
+      - hvplot==0.6.0
+      - numpy==1.19.1
+      - pandas==1.0.5 # 1.1.0 breaks on our sales dataset
+      - pip==20.2.2
+      - pyarrow==0.15.1
+      - lxml==4.6.1
+      - pyjanitor==0.20.9
+      - python-slugify==3.0.4
+      - scikit-learn==0.23.2
+      - scipy==1.5.2
+      - seaborn==0.10.1
+      - shap==0.35.0
+      - statsmodels==0.11.1 # R style GLM models
+      - yellowbrick==1.1
+      - pip:
+          - luminol==0.4
+          - ruptures==1.1.3
+          - XlsxWriter==1.3.8
+  windows:
+    channels:
+      - defaults
+      - conda-forge
+    dependencies:
+      - pip:
+          - xgboost==1.2.0 # newer versions of py-xgboost are not avlb. older versions are not compat with shap
+  linux:
+    channels:
+      - defaults
+      - conda-forge
+    dependencies:
+      - xgboost==1.2.0 # newer versions of py-xgboost are not avlb. older versions are not compat with shap
+classification-py:
+  common-os:
+    channels:
+      - defaults
+      - conda-forge
+    dependencies:
+      - pip:
+          - xverse==1.0.5 # for Weight of Evidence based binning
+regression-py:
+tpo-py:
+  common-os:
+    channels:
+      - defaults
+      - conda-forge
+    dependencies:
+      - pymc3==3.9.3 # Alternative to Bayesian Learning
+      - pyomo==5.7 # Optimization model building
+      - six==1.15.0 # Bayesian Learning
+      - arviz==0.10.0 # Bayesian Learning
+      - pip:
+          # no comment --> dependancies for core packages
+          - cloudpickle==1.3.0 
+          - gast==0.3.2
+          - absl-py==0.10.0
+          - astunparse==1.6.3
+          - google-pasta==0.2.0
+          - grpcio==1.32.0
+          - keras-preprocessing==1.1.2
+          - opt-einsum==3.3.0
+          - protobuf==3.13.0
+          - pyasn1==0.4.8
+          - rsa==4.6
+          - pyasn1-modules==0.2.8
+          - google-auth==1.22.1
+          - google-auth-oauthlib==0.4.1
+          - oauthlib==3.1.0
+          - requests-oauthlib==1.3.0
+          - protobuf==3.13.0
+          - tensorboard-plugin-wit==1.7.0
+          - werkzeug==1.0.1
+          - wheel==0.35.1
+          - tensorflow-estimator==2.2.0 # Bayesian  # core
+          - termcolor==1.1.0
+          - wrapt==1.12.1
+          - tensorboard==2.2.0
+          - tensorflow==2.2.0 # Bayesian Learning # core
+          - tensorflow-probability==0.10.1 # Bayesian Learning # core
+rtm:
+addon-code_format:
+  common-os:
+    channels:
+      - defaults
+      - conda-forge
+    dependencies:
+      - bandit==1.6.2 #core
+      - GitPython==3.1.3 #dependency
+      - gitdb==4.0.5 #dependency
+      - smmap==3.0.4 #dependency
+      - stevedore==3.2.2 #dependency
+      - pbr==5.5.0 #dependency
+      - flake8==3.8.3 #core
+      - mccabe==0.6.1 #dependency
+      - pycodestyle==2.6.0 #dependency
+      - pyflakes==2.2.0 #dependency
+      - flake8-black==0.2.1 #core
+      - black==19.10b0 #dependency
+      - appdirs==1.4.4 #dependency
+      - attrs==20.1.0 #dependency
+      - click==7.1.2 #dependency
+      - pathspec==0.7.0 #dependency
+      - regex==2020.7.14 #dependency
+      - toml==0.10.1 #dependency
+      - typed-ast==1.4.1 #dependency
+      - flake8-docstrings==1.5.0 #core
+      - pydocstyle==5.1.1 #dependency
+      - snowballstemmer==2.0.0 #dependency
+      - flake8-isort==3.0.1 #core
+      - isort==4.3.21 #core
+      - testfixtures==6.14.1 #dependency
+      - pip:
+          - flake8-bandit==2.1.2 #core
+          - flake8-polyfill==1.0.2 #dependency
+addon-documentation:
+  common-os:
+    channels:
+      - defaults
+      - conda-forge
+    dependencies:
+      - sphinx==3.2.1 #core
+      - sphinxcontrib-napoleon==0.7 #core
+      - nbsphinx==0.7.1 #core
+      - docutils==0.16 #dependency
+      - nbconvert==5.6.1 #dependency
+      - nbformat==5.0.7 #dependency
+      - alabaster==0.7.12 #dependency
+      - babel==2.8.0 #dependency
+      - imagesize==1.2.0 #dependency
+      - snowballstemmer==2.0.0 #dependency
+      - sphinxcontrib-applehelp==1.0.2 #dependency
+      - sphinxcontrib-devhelp==1.0.2 #dependency
+      - sphinxcontrib-htmlhelp==1.0.3 #dependency
+      - sphinxcontrib-jsmath==1.0.1 #dependency
+      - sphinxcontrib-qthelp==1.0.3 #dependency
+      - sphinxcontrib-serializinghtml==1.1.4 #dependency
+      - pockets==0.9.1 #dependency
+      - pip:
+          - sphinx-rtd-theme==0.5.0 #core
+          - jupyter-core==4.6.3 #dependency
+          - git+https://github.com/jupyter/jupyter-sphinx.git@v0.3.1 #core
+          - ipywidgets==7.5.1 #dependency
+          - jupyter-sphinx==0.3.1 #dependency
+          - widgetsnbextension==3.5.1 #dependency
+addon-testing:
+  common-os:
+    channels:
+      - defaults
+      - conda-forge
+    dependencies:
+      - pytest==6.0.1 # testing Main package
+      - more-itertools==8.5.0 #dependency
+      - pluggy==0.13.1 #dependency
+      - py==1.9.0 #dependency
+      - toml==0.10.1 #dependency
+      - hypothesis==5.20.3 # Generating test cases Main package
+      - sortedcontainers==2.2.2 #dependency
+      - pip:
+          - iniconfig==1.0.1 #dependency
+addon-jupyter:
+  common-os:
+    channels:
+      - defaults
+      - conda-forge
+    dependencies:
+      - jupyterlab==2.2.6 #core
+      - json5==0.9.5 #dependency
+      - nodejs==10.13.0 #jupyter lab extension core
+      - pip:
+          - jupyterlab-server==1.2.0 #dependency
+addon-extras:
+  common-os:
+    channels:
+      - defaults
+      - conda-forge
+    dependencies:
+      - tpot==0.11.5 # AutoML
+      - deap==1.3.1 #dependency
+      - stopit==1.1.2 #dependency
+      - tqdm==4.48.2 #dependency
+      - safety==1.9.0 # checks for security vulnerabilities in installed dependencies
+      - dparse==0.5.1 #dependency
+      - toml==0.10.1 #dependency
+      - invoke==1.3.0 # workflow automation
+      - mlxtend==0.17.3 #Only for forward & backward selection
+      - eli5==0.10.1 # debugging machine learning classifiers
+      - tabulate==0.8.7 #dependency
+      - mlflow==1.10.0 # Model tracking. doesn't work on windows 10.
+      - pip:
+          - graphviz==0.14 #dependency
+          - update-checker==0.18.0 #dependency
+pyspark: # Only relevant for documentation
+  common-os:
+    channels:
+      - defaults
+      - conda-forge
+    dependancies:
+      - cytoolz==0.11.0
+      - pip:
+        - pyspark==2.2.2
+        - pyspark_dist_explore==0.1.8
+        - py4j==0.10.7
