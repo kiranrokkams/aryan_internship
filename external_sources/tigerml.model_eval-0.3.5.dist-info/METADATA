@@ -1,0 +1,18 @@
+Metadata-Version: 2.1
+Name: tigerml.model-eval
+Version: 0.3.5
+Summary: Model Evaluation package of TigerML
+Home-page: UNKNOWN
+Author: Tiger Analytics
+Author-email: support@tigeranalytics.com
+License: TBD
+Platform: UNKNOWN
+Classifier: Private :: Do Not Upload to pypi server
+Requires-Python: >=3.6.1
+Requires-Dist: tigerml.core
+Requires-Dist: shap (==0.35.0)
+Requires-Dist: statsmodels (==0.11.1)
+
+UNKNOWN
+
+
