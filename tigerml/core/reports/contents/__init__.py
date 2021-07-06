@@ -1,5 +1,4 @@
-from .Table import Table
-from .Image import Image
-from .Chart import Chart
-from .misc import *
-
+from .Table import Table  # noqa
+from .Image import Image  # noqa
+from .Chart import Chart  # noqa
+from .misc import *  # noqa

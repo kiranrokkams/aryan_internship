@@ -9,16 +9,22 @@ class Outlier:
     method: str, default is percentile.
         Accepted values are mean, median, percentile and threshold
         The method that is used to determine the upper/lower bounds
-        * If percentile - bounds are quantiles (0-1). Default bounds are (0.01, 0.99)
-        * If mean - bounds are no. of standard deviations from mean. Default bounds are (3, 3)
-        * If median - bounds are no. of IQRs away from median. Default bounds are  (1.5, 1.5)
-        * If threshold - Fixed values for outlier identification should be provided through lb and/or ub variables. No default bounds.
+        * If percentile - bounds are quantiles (0-1).
+          Default bounds are (0.01, 0.99)
+        * If mean - bounds are no. of standard deviations from mean.
+          Default bounds are (3, 3)
+        * If median - bounds are no. of IQRs away from median.
+          Default bounds are  (1.5, 1.5)
+        * If threshold - Fixed values for outlier identification
+          should be provided through lb and/or ub variables. No default bounds.
     lb: dict, default is none
         lb is the lower bound
-        * If not None, pass a dictionary of columns with custom lower limits for each
+        * If not None, pass a dictionary of columns
+         with custom lower limits for each
     ub: dict, default is none
         ub is the upper bound
-        * If not None, pass a dictionary of columns with custom upper limits for each
+        * If not None, pass a dictionary of columns
+         with custom upper limits for each
     """
 
     def __init__(
@@ -26,19 +32,26 @@ class Outlier:
     ):
         """Initialize Estimator."""
         if method not in ["mean", "median", "percentile", "threshold"]:
-            raise ValueError("Unsupported outlier method '{}', should be one of from ['mean', 'median', 'percentile', "
-                             "'threshold']".format(method))
+            raise ValueError(
+                "Unsupported outlier method '{}', should be "
+                "one of from ['mean', 'median', 'percentile', "
+                "'threshold']".format(method)
+            )
         default_limits = {
             "percentile": (0.01, 0.99),
             "mean": (3, 3),
             "median": (1.5, 1.5),
-            "threshold": ({}, {})
+            "threshold": ({}, {}),
         }
         self.method = method
 
-        if self.method == 'threshold' and lb is None and ub is None:
-            raise ValueError("For 'threshold' method, a dictionary is required for variable 'lb' and/or 'ub', "
-                             "having columns as keys and custom outlier thresholds defined for each column as values.")
+        if self.method == "threshold" and lb is None and ub is None:
+            raise ValueError(
+                "For 'threshold' method, a dictionary is required "
+                "for variable 'lb' and/or 'ub', "
+                "having columns as keys and custom outlier "
+                "thresholds defined for each column as values."
+            )
         if lb is None:
             lb = default_limits[method][0]
         if ub is None:
@@ -55,7 +68,8 @@ class Outlier:
         X : pd.DataFrame or np.Array
             Dataframe/2D Array consisting of independent features
         cols : list, optional
-            List of column names for features relevant when X is Arrays, by default None
+            List of column names for features relevant when
+            X is Arrays, by default None
 
         """
         (self.lb, self.ub) = self._compute_outlier_bounds(
@@ -112,7 +126,6 @@ class Outlier:
         pd.DataFrame
             Transformed dataframe is returned
         """
-
         return self.fit(X, cols).transform(X, drop)
 
     def _compute_outlier_bounds(  # noqa
@@ -140,7 +153,6 @@ class Outlier:
         tuple
             a tuple of dictionaries for lb and ub values of all columns.
         """
-
         if cols is None:
             cols = df.select_dtypes("number").columns.to_list()
 

@@ -1,14 +1,17 @@
-from ...contents import Table
 from pptx.shapes.shapetree import TablePlaceholder
-from ..helpers import df_to_table
 
+from ...contents import Table
+from ..helpers import df_to_table
 
 create_table = TablePlaceholder.insert_table
 
-def replace_with_table(pptable, shape, slide):
-    table = slide.shapes.add_table(pptable.height, pptable.width, shape.left, shape.top, shape.width, shape.height)
 
-    #calculate max width/height for target size
+def replace_with_table(pptable, shape, slide):
+    table = slide.shapes.add_table(
+        pptable.height, pptable.width, shape.left, shape.top, shape.width, shape.height
+    )
+
+    # calculate max width/height for target size
     # ratio = min(shape.width / float(table.width), shape.height / float(pic.height))
     #
     # table.height = shape.height
@@ -23,19 +26,24 @@ def replace_with_table(pptable, shape, slide):
 
 
 class PptTable(Table):
+    """Ppt table class."""
 
     @classmethod
     def from_parent(cls, parent):
+        """Returns parent class for Ppt table class."""
         return cls(parent.styler)
 
-    # def set_params(self, na_rep=None, float_format=None, columns=None, header=None, index=True, index_label=None,
-    #                merge_cells=True, inf_rep="inf", show_title=True):
+    # def set_params(
+    #                self, na_rep=None, float_format=None,
+    #                columns=None, header=None, index=True, index_label=None,
+    #                merge_cells=True, inf_rep="inf", show_title=True
+    #                ):
     #     for key in self.params:
     #         if eval(key) is not None:
     #             self.params[key] = eval(key)
     #     return self
 
     def save(self, placeholder, slide_obj):
+        """Saves for Ppt table class."""
         table = replace_with_table(self, placeholder, slide_obj)
         df_to_table(table, self.data)
-

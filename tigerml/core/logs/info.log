@@ -1,8 +1,2 @@
-06-01-2021 07:10:10 - WARNING - tigerml.core.dataframe.dataframe::convert_datetimes::191 - TigerML warning: Please pass a dict, with column names as key and their format in the .csv file
-		(Note: The format displayed in .xlsx file may not be same as that present in .csv) as values,
-		to format_dict argument to perform correct conversion. 
-		Eg: df = df.convert_datetimes(format_dict={'Col_1':'%d-%m-%Y', Col_2':'%I:%M:%S %p'})
-06-01-2021 07:14:32 - WARNING - tigerml.core.dataframe.dataframe::convert_datetimes::191 - TigerML warning: Please pass a dict, with column names as key and their format in the .csv file
-		(Note: The format displayed in .xlsx file may not be same as that present in .csv) as values,
-		to format_dict argument to perform correct conversion. 
-		Eg: df = df.convert_datetimes(format_dict={'Col_1':'%d-%m-%Y', Col_2':'%I:%M:%S %p'})
+02-06-2021 13:46:13 - WARNING - tigerml.core.simulate.create_data::categorical_distribution_samples::90 - probabilities [0.3, 0.4, 0.2, 0.1] do not sum to 1, so values will be normalized as [0.3 0.4 0.2 0.1].
+02-06-2021 13:46:54 - WARNING - tigerml.core.simulate.create_data::categorical_distribution_samples::90 - probabilities [0.3, 0.4, 0.2, 0.1] do not sum to 1, so values will be normalized as [0.3 0.4 0.2 0.1].

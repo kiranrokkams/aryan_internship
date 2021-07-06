@@ -1,16 +1,19 @@
 import pandas as pd
-from hypothesis import given, settings, HealthCheck
+from hypothesis import HealthCheck, given, settings
 from hypothesis.strategies import composite, integers, sampled_from
 from sklearn.datasets import make_classification
-from tigerml.core.dataframe.helpers import tigerify, detigerify
+
+from tigerml.core.dataframe.helpers import detigerify, tigerify
 
 
 # ---------------------------------------------------------------------------------
 # ---------- composite strategy to generate Classification dataset ----------------
 @composite
 def classification_data(draw):
-    """
-    Creates dataset of sizes upto 100k using hypothesis library and makes it into classfication data using
+    """Classification data.
+
+    Creates dataset of sizes upto 100k using hypothesis library
+    and makes it into classfication data using
     sklearn.make_classfication.
     """
     n_samples_val = draw(integers(min_value=1000, max_value=100000))
@@ -39,16 +42,14 @@ def classification_data(draw):
 
 # ---------------------------------------------------------------------------------
 # ---------------------- detigerify testing ---------------------------------
-@settings(max_examples=10, deadline=None,suppress_health_check=HealthCheck.all())
+@settings(max_examples=10, deadline=None, suppress_health_check=HealthCheck.all())
 @given(test_df=classification_data())
 def test_detigerify(test_df):
 
     df = tigerify(test_df)
-    assert (df.__module__.startswith('tigerml.core.dataframe'))
+    assert df.__module__.startswith("tigerml.core.dataframe")
     data1 = detigerify(df)
     data2 = detigerify(test_df)
 
-    assert (not data1.__module__.startswith('tigerml.core.dataframe'))
-    assert (not data2.__module__.startswith('tigerml.core.dataframe'))
-
-
+    assert not data1.__module__.startswith("tigerml.core.dataframe")
+    assert not data2.__module__.startswith("tigerml.core.dataframe")

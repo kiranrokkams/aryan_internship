@@ -1,16 +1,15 @@
+"""Feature Importance."""
+import logging
+
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import (
-    LassoCV,
-    LogisticRegressionCV,
-)
-from sklearn.model_selection import StratifiedKFold
 from hvplot import hvPlot
+from sklearn.linear_model import LassoCV, LogisticRegressionCV
+from sklearn.model_selection import StratifiedKFold
+
 import tigerml.core.dataframe as td
-import holoviews as hv
-from tigerml.core.utils.modeling import Algo
 from tigerml.core.utils._lib import fail_gracefully
-import logging
+from tigerml.core.utils.modeling import Algo
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,9 +26,16 @@ class ModelFeatureImportance:
     """
 
     def __init__(
-        self, model=None, cv=None, score=None, is_classification=None, algo=None, **kwargs,
+        self,
+        model=None,
+        cv=None,
+        score=None,
+        is_classification=None,
+        algo=None,
+        **kwargs,
     ):
-        """
+        """Returns a bar plot of feature importance given by the model.
+
         Parameters
         ----------
         model : Estimator
@@ -40,7 +46,8 @@ class ModelFeatureImportance:
         score : `string`
             Scoring function
         is_classification : `Boolean`
-            True if dependent variable is categorical, Classification problem, else False.
+            True if dependent variable is categorical, Classification problem,
+            else False.
         kwargs : `dict`
             Keyword arguments that are passed to the base class.
         """
@@ -58,10 +65,14 @@ class ModelFeatureImportance:
         if (algo is None and hasattr(model, "predict_proba")) or self.is_classification:
             self.algo = algo_object.classification
 
-    def _create_model(self, is_classification=None, model=None, cv=None, score=None, labels=None):
-        """
+    def _create_model(
+        self, is_classification=None, model=None, cv=None, score=None, labels=None
+    ):
+        """Creating a model.
+
         is_classification : `Boolean`
-            True if dependent variable is categorical, Classification problem, else False.
+            True if dependent variable is categorical, Classification problem,
+            else False.
         model : Estimator
             A `Scikit-Learn` estimator that learns feature importances.
         cv : `int`
@@ -83,7 +94,9 @@ class ModelFeatureImportance:
                 model = LassoCV(cv=cv)
                 score = score or "neg_mean_absolute_error"
             else:
-                raise Exception("Should pass either model or is_classification as input.")
+                raise Exception(
+                    "Should pass either model or is_classification as input."
+                )
         if "sklstatsmodellogit" in str(model).lower():
             cv = cv or StratifiedKFold(n_splits=5)
             score = score or "roc_auc"
@@ -100,7 +113,11 @@ class ModelFeatureImportance:
             except AttributeError:
                 continue
         if feature_importances_ is None:
-            raise Exception("could not find feature importances param for {}".format(self.estimator.__class__.__name__))
+            raise Exception(
+                "could not find feature importances param for {}".format(
+                    self.estimator.__class__.__name__
+                )
+            )
 
         if feature_importances_.ndim > 1:
             feature_importances_ = np.mean(feature_importances_, axis=0)
@@ -116,7 +133,8 @@ class ModelFeatureImportance:
         return feature_importances_, features_
 
     def fit(self, X, y):
-        """
+        """Using fit taking X and y as arguments.
+
         Parameters
         ----------
         X : pd.DataFrame, independent variables.
@@ -125,7 +143,11 @@ class ModelFeatureImportance:
         # initialize the model
         if self.is_classification is not None or self.estimator:
             self._create_model(
-                self.is_classification, model=self.estimator, labels=X.columns, cv=self.cv, score=self.score_func,
+                self.is_classification,
+                model=self.estimator,
+                labels=X.columns,
+                cv=self.cv,
+                score=self.score_func,
             )
         else:
             from tigerml.core.utils.pandas import is_discrete
@@ -139,7 +161,11 @@ class ModelFeatureImportance:
         data = (
             td.DataFrame(feature_importances_)
             .set_index(features_)
-            .merge(td.DataFrame(X.abs().mean().rename("mean")), left_index=True, right_index=True,)
+            .merge(
+                td.DataFrame(X.abs().mean().rename("mean")),
+                left_index=True,
+                right_index=True,
+            )
         )
         feature_importances_ = data.iloc[:, 0].mul(data.iloc[:, 1]).to_numpy()
         sort_idx = np.argsort(feature_importances_)
@@ -148,7 +174,7 @@ class ModelFeatureImportance:
         return self
 
     def score(self, X, y):
-        """Returns model score R-Squared value if it is a `regression model` else accuracy score
+        """Returns model score R-Squared value if it is a `regression model` else accuracy score.
 
         Parameters
         ----------
@@ -158,16 +184,20 @@ class ModelFeatureImportance:
         Returns
         -------
         score : `float`
-            model score R-Squared value if it is a regression model else accuracy score
+            model score R-Squared value if it is a regression model
+            else accuracy score
         """
         return self.model.score(X, y)
 
     def get_plot_data(self, n=20):
-        feat_imp = pd.DataFrame(self.feature_importances_, index=self.features_, columns=["importance"])
-        feat_imp['abs'] = abs(feat_imp['importance'])
-        feat_imp = feat_imp.nlargest(min([len(self.features_), n]), 'abs')
-        feat_imp.drop(['abs'], inplace=True, axis=1)
-        feat_imp.sort_values('importance', ascending=True, inplace=True)
+        """Returns Feature importances dataframe."""
+        feat_imp = pd.DataFrame(
+            self.feature_importances_, index=self.features_, columns=["importance"]
+        )
+        feat_imp["abs"] = abs(feat_imp["importance"])
+        feat_imp = feat_imp.nlargest(min([len(self.features_), n]), "abs")
+        feat_imp.drop(["abs"], inplace=True, axis=1)
+        feat_imp.sort_values("importance", ascending=True, inplace=True)
         return feat_imp
 
     @fail_gracefully()
@@ -178,7 +208,7 @@ class ModelFeatureImportance:
                 if (
                     "sklstatsmodellogit" in str(self.estimator).lower()
                     or "sklstatsmodelols" in str(self.estimator).lower()
-                    or hasattr(self.estimator,'coef_')
+                    or hasattr(self.estimator, "coef_")
                 ):
                     ylabel = "Feature Importance [determined by coeff * mean(x)]"
                 else:
@@ -190,11 +220,12 @@ class ModelFeatureImportance:
                     stacked=False,
                     ylabel=ylabel,
                     xlabel="Features",
-                    title="Feature Importances from {}".format(self.estimator.__class__.__name__),
+                    title="Feature Importances from {}".format(
+                        self.estimator.__class__.__name__
+                    ),
                 )
                 return plot
             except AttributeError as e:  # no model_importances_
                 return str(e)
         else:
             return str(self.error)
-

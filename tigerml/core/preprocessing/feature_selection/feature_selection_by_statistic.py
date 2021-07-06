@@ -2,13 +2,16 @@ import numpy as np
 import pandas as pd
 import scipy
 from scipy.stats import chi2_contingency, pearsonr
-from sklearn.feature_selection import (f_classif, f_regression,
-                                       mutual_info_classif,
-                                       mutual_info_regression)
+from sklearn.feature_selection import (
+    f_classif,
+    f_regression,
+    mutual_info_classif,
+    mutual_info_regression,
+)
 from sklearn.feature_selection._mutual_info import _compute_mi_cd
-from sklearn.utils import check_array, check_random_state
-from sklearn.preprocessing import scale
 from sklearn.metrics.cluster import mutual_info_score
+from sklearn.preprocessing import scale
+from sklearn.utils import check_array, check_random_state
 
 from tigerml.core.utils.pandas import get_bool_cols, get_cat_cols, get_num_cols
 from tigerml.core.utils.stats import correlation_ratio, woe_info_value
@@ -26,7 +29,7 @@ def _check_X(X):
 
 def _check_y(y):
     """Determine the type of target variable.
-    
+
     Parameters
     ----------
     y: {np.array, pd.Series or pd.Dataframe} of shape (n_samples, 1).
@@ -37,7 +40,6 @@ def _check_y(y):
     y_type: str
         Datatype of the target variable.
     """
-
     if isinstance(y, np.ndarray):
         target_df = pd.DataFrame({"target": y})
     elif isinstance(y, pd.Series):
@@ -45,7 +47,9 @@ def _check_y(y):
     elif isinstance(y, pd.DataFrame):
         target_df = y
     else:
-        raise ValueError("Target variable should be one of np.array. pd.Series or pd.DataFrame")
+        raise ValueError(
+            "Target variable should be one of np.array. pd.Series or pd.DataFrame"
+        )
 
     if len(get_num_cols(target_df)) >= 1:
         if target_df["target"].nunique() == 2:
@@ -57,7 +61,10 @@ def _check_y(y):
     elif len(get_cat_cols(target_df)) >= 1:
         y_type = "categorical"
     else:
-        raise ValueError("Unsupported y datatype. Unable to detect Y type to be continuous or boolean or categorical")
+        raise ValueError(
+            "Unsupported y datatype. Unable to detect Y type "
+            "to be continuous or boolean or categorical"
+        )
 
     return y_type
 
@@ -94,7 +101,8 @@ def corr_coef(X, y):
     Parameters
     ----------
     X : {array-like, sparse matrix} shape = [n_samples, n_features]
-        The set of regressors for which correlation coefficient is calculated sequentially.
+        The set of regressors for which correlation coefficient
+        is calculated sequentially.
     y : {np.array, pd.Series or pd.Dataframe} of shape (n_samples, 1)
 
     Returns
@@ -137,25 +145,45 @@ def mutual_value(X, y):
     num_cols = get_num_cols(X)
     y_type = _check_y(y)
     _validate_params(
-        y_type, "mutual_value", cat_cols=cat_cols, bool_cols=bool_cols, num_cols=num_cols,
+        y_type,
+        "mutual_value",
+        cat_cols=cat_cols,
+        bool_cols=bool_cols,
+        num_cols=num_cols,
     )
     random_state = 42
     if y_type == "continuous":
         num_col_scores = {}
         if num_cols:
-            num_col_scores = dict(zip(num_cols, mutual_info_regression(X=X[num_cols], y=y, random_state=random_state)))
+            num_col_scores = dict(
+                zip(
+                    num_cols,
+                    mutual_info_regression(
+                        X=X[num_cols], y=y, random_state=random_state
+                    ),
+                )
+            )
         cat_col_scores = {}
         rng = check_random_state(random_state)
         scaled_y = scale(y, with_mean=False)
-        scaled_y += 1e-10 * np.maximum(1, np.mean(np.abs(scaled_y))) * rng.randn(X.shape[0])
-        for col in cat_cols+bool_cols:
-            cat_col_scores[col] = _compute_mi_cd(c=scaled_y, d=X[col].values, n_neighbors=3)
+        scaled_y += (
+            1e-10 * np.maximum(1, np.mean(np.abs(scaled_y))) * rng.randn(X.shape[0])
+        )
+        for col in cat_cols + bool_cols:
+            cat_col_scores[col] = _compute_mi_cd(
+                c=scaled_y, d=X[col].values, n_neighbors=3
+            )
         all_col_scores = {**num_col_scores, **cat_col_scores}
         mutual_info = np.array([all_col_scores[col] for col in X.columns])
     elif y_type in ["categorical", "boolean"]:
         num_col_scores = {}
         if num_cols:
-            num_col_scores = dict(zip(num_cols, mutual_info_classif(X=X[num_cols], y=y, random_state=random_state)))
+            num_col_scores = dict(
+                zip(
+                    num_cols,
+                    mutual_info_classif(X=X[num_cols], y=y, random_state=random_state),
+                )
+            )
         cat_col_scores = {}
         for col in cat_cols + bool_cols:
             cat_col_scores[col] = mutual_info_score(X[col].values, y)
@@ -164,7 +192,7 @@ def mutual_value(X, y):
     return mutual_info
 
 
-def woe_iv(X, y, bin_type='cut', nbins=10):
+def woe_iv(X, y, bin_type="cut", nbins=10):
     """Compute IV (Information Value) from WOE (Weight Of Evidence) for Y vs. X.
 
     Parameters
@@ -186,7 +214,9 @@ def woe_iv(X, y, bin_type='cut', nbins=10):
     num_cols = get_num_cols(X)
     y_type = _check_y(y)
     y = pd.Series(y)
-    _validate_params(y_type, "woe_iv", cat_cols=cat_cols, bool_cols=bool_cols, num_cols=num_cols)
+    _validate_params(
+        y_type, "woe_iv", cat_cols=cat_cols, bool_cols=bool_cols, num_cols=num_cols
+    )
 
     woe_iv_val = []
     for col in X.columns:
@@ -197,7 +227,7 @@ def woe_iv(X, y, bin_type='cut', nbins=10):
             stat_ = woe_info_value(target_series=y, idv_series=X[col])
         else:
             if len(X[col].unique()) > nbins:
-                if bin_type == 'cut':
+                if bin_type == "cut":
                     binned_col = pd.cut(X[col], nbins).astype(str)
                 else:
                     binned_col = pd.qcut(X[col], nbins).astype(str)
@@ -349,7 +379,9 @@ def corr_ratio(X, y):
     bool_cols = get_bool_cols(X)
     num_cols = get_bool_cols(X)
     y_type = _check_y(y)
-    _validate_params(y_type, "corr_ratio", cat_cols=cat_cols, bool_cols=bool_cols, num_cols=num_cols)
+    _validate_params(
+        y_type, "corr_ratio", cat_cols=cat_cols, bool_cols=bool_cols, num_cols=num_cols
+    )
     corr_ratio = []
     for col in X.columns:
         if y_type in ["categorical", "boolean"]:

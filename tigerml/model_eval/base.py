@@ -1,8 +1,9 @@
 """Description: Model Report."""
 
+from datetime import datetime
+
 import numpy as np
 import pandas as pd
-from datetime import datetime
 from sklearn.exceptions import NotFittedError
 from sklearn.pipeline import Pipeline
 from sklearn.utils.multiclass import type_of_target
@@ -12,7 +13,11 @@ from tigerml.core.reports import create_report
 from tigerml.core.scoring import compute_residual
 
 from .plotters.evaluation import ClassificationEvaluation, RegressionEvaluation
-from .plotters.interpretation import Algo, ModelInterpretation, get_shap_summary_plot
+from .plotters.interpretation import (
+    Algo,
+    ModelInterpretation,
+    get_shap_summary_plot,
+)
 
 algo_object = Algo()
 
@@ -20,7 +25,11 @@ algo_object = Algo()
 def verify_y_type(obj):
     if obj is None:
         pass
-    elif not (isinstance(obj, pd.DataFrame) or isinstance(obj, pd.Series) or isinstance(obj, np.ndarray)):
+    elif not (
+        isinstance(obj, pd.DataFrame)
+        or isinstance(obj, pd.Series)
+        or isinstance(obj, np.ndarray)
+    ):
         print(type(obj))
         raise TypeError("y should be pd.DataFrame / pd.Series / np.ndarray")
 
@@ -61,7 +70,7 @@ def set_y_type(obj, multi_class=False):
                 None
             else:
                 obj = obj[:, 1]
-        except:
+        except Exception:
             pass
     if obj is not None:
         if not multi_class:
@@ -92,6 +101,7 @@ def clean_dict(dict_to_clean):
 
 
 class ModelReport:
+    """Model report class."""
 
     metrics = {}
     plots = {}
@@ -110,7 +120,16 @@ class ModelReport:
         display_labels: dict = None,
     ):
         self._init_assignments(
-            algo, y_train, model, x_train, yhat_train, x_test, y_test, yhat_test, refit, display_labels,
+            algo,
+            y_train,
+            model,
+            x_train,
+            yhat_train,
+            x_test,
+            y_test,
+            yhat_test,
+            refit,
+            display_labels,
         )
         self._validate_inputs()
 
@@ -181,7 +200,17 @@ class ModelReport:
         self._build_full_element_tree()
 
     def _init_assignments(
-        self, algo, y_train, model, x_train, yhat_train, x_test, y_test, yhat_test, refit, display_labels,
+        self,
+        algo,
+        y_train,
+        model,
+        x_train,
+        yhat_train,
+        x_test,
+        y_test,
+        yhat_test,
+        refit,
+        display_labels,
     ):
         # Disabling interpreation on test datasets
         self.interpret_test = False
@@ -196,7 +225,10 @@ class ModelReport:
         self.yhat_test = yhat_test
         self.refit = refit
         self.display_labels = display_labels
-        self.multi_class = type_of_target(self.y_train) == "multiclass" and self.algo == "classification"
+        self.multi_class = (
+            type_of_target(self.y_train) == "multiclass"
+            and self.algo == "classification"
+        )
         self.residual_train = None
         self.residual_test = None
         # Set report option
@@ -275,17 +307,28 @@ class ModelReport:
 
         if self.multi_class:
             if self.display_labels is None:
-                self.display_labels = dict(zip(set(self.y_train),[str(i) for i in set(self.y_train)]))
+                self.display_labels = dict(
+                    zip(set(self.y_train), [str(i) for i in set(self.y_train)])
+                )
                 # raise ValueError("display_labels is mandatory for multiclass classification")
             if len(self.display_labels) != len(set(self.y_train)):
-                raise ValueError("display labels and unique y train should be of the same length")
+                raise ValueError(
+                    "display labels and unique y train should be of the same length"
+                )
 
     def show_element_tree(self, expand_def=False):
         """Print element tree."""
         self._build_full_element_tree()
         print_dict_tree(self.element_tree, 0, expand_def)
 
-    def add_metric(self, metric_name, metric_func, more_is_better=True, display_format=None, default_params={}):
+    def add_metric(
+        self,
+        metric_name,
+        metric_func,
+        more_is_better=True,
+        display_format=None,
+        default_params={},
+    ):
         """Add custom metric to.
 
         Parameters
@@ -311,7 +354,9 @@ class ModelReport:
 
         >>> self.add_metric("Adj R^2", adjusted_r2, more_is_better=True, default_params={"idv":13})
         """
-        self.evaluator.add_metric(metric_name, metric_func, more_is_better, display_format, default_params)
+        self.evaluator.add_metric(
+            metric_name, metric_func, more_is_better, display_format, default_params
+        )
 
     def remove_metric(self, metric_name):
         """Remove metric from evaluation.
@@ -333,7 +378,7 @@ class ModelReport:
         plot_func : func
             function to get the plot. hv plots are recommended for interactions.
 
-        
+
         Examples
         --------
         >>> from tigerml.model_eval.plotters.evaluation.regression import create_scatter
@@ -358,7 +403,10 @@ class ModelReport:
 
     def _build_full_element_tree(self):
         self.element_tree = {}
-        self.element_tree["model_performance"] = {"metrics": self.evaluator.metrics, "plots": self.evaluator.plots}
+        self.element_tree["model_performance"] = {
+            "metrics": self.evaluator.metrics,
+            "plots": self.evaluator.plots,
+        }
         if self.report_option == 1:
             self.element_tree["model_interpretation"] = self.explainer.interpretations
 
@@ -384,20 +432,30 @@ class ModelReport:
                     if self.has_test:
                         self.yhat_test = set_y_type(self.model.predict(self.x_test))
                 elif self.multi_class:
-                    self.yhat_train = set_y_type(self.model.predict_proba(self.x_train), self.multi_class)
+                    self.yhat_train = set_y_type(
+                        self.model.predict_proba(self.x_train), self.multi_class
+                    )
                     if self.has_test:
-                        self.yhat_test = set_y_type(self.model.predict_proba(self.x_test), self.multi_class)
+                        self.yhat_test = set_y_type(
+                            self.model.predict_proba(self.x_test), self.multi_class
+                        )
                 else:
                     if "predict_proba" in dir(self.model):
-                        self.yhat_train = set_y_type(self.model.predict_proba(self.x_train)[:, 1])
+                        self.yhat_train = set_y_type(
+                            self.model.predict_proba(self.x_train)[:, 1]
+                        )
                         if self.has_test:
-                            self.yhat_test = set_y_type(self.model.predict_proba(self.x_test)[:, 1])
+                            self.yhat_test = set_y_type(
+                                self.model.predict_proba(self.x_test)[:, 1]
+                            )
                     else:
                         self.yhat_train = set_y_type(self.model.predict(self.x_train))
                         if self.has_test:
                             self.yhat_test = set_y_type(self.model.predict(self.x_test))
-            except:
-                raise Exception("Prediction failed: Either pass a fitted model or set refit=True")
+            except Exception:
+                raise Exception(
+                    "Prediction failed: Either pass a fitted model or set refit=True"
+                )
 
     def _compute_residuals(self):
         """
@@ -422,7 +480,8 @@ class ModelReport:
         return self.explainer.get_coefs_table()
 
     def get_feature_importances(self, plot=True, top_n_features=20):
-        """Returns feature importance from the model as an interactive hvplot bar chart or as a dataframe having
+        """Returns feature importance from the model as an interactive hvplot bar chart or as a dataframe having.
+
         importance values.
 
         Note: For the linear models, feature importance is computed by coeff * mean(x).
@@ -438,7 +497,9 @@ class ModelReport:
         -------
         feature importance: hvplot object or pd.DataFrame
         """
-        return self.explainer.get_feature_importances(X=self.explainer.x_train, plot=plot, n=top_n_features)
+        return self.explainer.get_feature_importances(
+            X=self.explainer.x_train, plot=plot, n=top_n_features
+        )
 
     # def get_interpretation_plots(self, include_shap=False,
     #                              errorbuckets_spec=None,
@@ -557,7 +618,9 @@ class ModelReport:
         if metrics.__class__.__name__ == "DataFrame":
             from tigerml.core.reports import Table
 
-            metrics = metrics.transpose().reset_index(level=[1]).pivot(columns="dataset")[0]
+            metrics = (
+                metrics.transpose().reset_index(level=[1]).pivot(columns="dataset")[0]
+            )
             metrics.index.name = None
             metrics.columns.name = None
             metrics = metrics.astype(str)
@@ -565,7 +628,9 @@ class ModelReport:
             from tigerml.core.reports import table_styles
 
             metrics_table.apply_cell_format(
-                {"width": table_styles.get_max_width}, cols=list(metrics.columns), index=True,
+                {"width": table_styles.get_max_width},
+                cols=list(metrics.columns),
+                index=True,
             )
             report_dict["metrics"] = metrics_table
         else:
@@ -575,8 +640,13 @@ class ModelReport:
         report_dict["plots"] = plots_dict
         return report_dict
 
-    def get_interpretation_report(self, include_shap=False, errorbuckets_spec=None, n_features=20,
-                                  include_shap_test_error_analysis=False):
+    def get_interpretation_report(
+        self,
+        include_shap=False,
+        errorbuckets_spec=None,
+        n_features=20,
+        include_shap_test_error_analysis=False,
+    ):
         """
         Interpret the evaluated model's performance with or without shap support.
 
@@ -602,34 +672,51 @@ class ModelReport:
             if self.report_option == 2 or self.multi_class:
                 print("SHAP disabled as it is not applicable for the input provided")
                 include_shap = False
-        return self.explainer.get_plots(include_shap=include_shap, errorbuckets_spec=errorbuckets_spec, n_features=n_features, include_shap_test_error_analysis=include_shap_test_error_analysis)
+        return self.explainer.get_plots(
+            include_shap=include_shap,
+            errorbuckets_spec=errorbuckets_spec,
+            n_features=n_features,
+            include_shap_test_error_analysis=include_shap_test_error_analysis,
+        )
 
-    def _get_report(self, format=".html", file_path="", include_shap=False, 
-        errorbuckets_spec=None, n_features=20,
+    def _get_report(
+        self,
+        format=".html",
+        file_path="",
+        include_shap=False,
+        errorbuckets_spec=None,
+        n_features=20,
         include_shap_test_error_analysis=False,
-        cutoff_value=0.5):
+        cutoff_value=0.5,
+    ):
         """Generate a consolidate report of model performance and interpretation."""
         report_dict = dict()
-        report_dict["model_performance"] = self.get_performance_report(cutoff_value=cutoff_value)
+        report_dict["model_performance"] = self.get_performance_report(
+            cutoff_value=cutoff_value
+        )
         if (len(self.explainer.interpretations) > 0) or self.multi_class:
             report_dict["model_interpretation"] = self.get_interpretation_report(
-                include_shap = include_shap,
-                errorbuckets_spec = errorbuckets_spec,
-                n_features = n_features,
-                include_shap_test_error_analysis = include_shap_test_error_analysis,
+                include_shap=include_shap,
+                errorbuckets_spec=errorbuckets_spec,
+                n_features=n_features,
+                include_shap_test_error_analysis=include_shap_test_error_analysis,
             )
         if self.multi_class and (self.report_option == 1):
-            shap_fe = get_shap_summary_plot(self.model, X=self.x_train, native_plot=False)
+            shap_fe = get_shap_summary_plot(
+                self.model, X=self.x_train, native_plot=False
+            )
             if "feature_importance" not in report_dict["model_interpretation"].keys():
                 report_dict["model_interpretation"]["feature_importance"] = {}
-            report_dict["model_interpretation"]["feature_importance"]["from_shap"] = [shap_fe]
+            report_dict["model_interpretation"]["feature_importance"]["from_shap"] = [
+                shap_fe
+            ]
         # In case of multi-class with report option 2,
         # "model_interpretation" gets created with blank dict
         # Need to remove "model_interpretation" from report_dict
         if self.multi_class and (self.report_option == 2):
             if "model_interpretation" in report_dict.keys():
                 report_dict.pop("model_interpretation")
-        create_report(report_dict, name = file_path, format = format)
+        create_report(report_dict, name=file_path, format=format)
 
 
 class RegressionReport(ModelReport):
@@ -750,7 +837,15 @@ class RegressionReport(ModelReport):
         """
         return self.evaluator.prediction_error_plot()
 
-    def get_report(self, format=".html", file_path="", include_shap=False, errorbuckets_spec=None, n_features=20, name=None):
+    def get_report(
+        self,
+        format=".html",
+        file_path="",
+        include_shap=False,
+        errorbuckets_spec=None,
+        n_features=20,
+        name=None,
+    ):
         """
         Generate a consolidate report of model performance and interpretation.
 
@@ -782,7 +877,9 @@ class RegressionReport(ModelReport):
             No. of top features used for interpretation. Applies to dependency plots and feature importance.
         """
         if not file_path:
-            file_path = "regression_report_at_{}".format(datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+            file_path = "regression_report_at_{}".format(
+                datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            )
 
         super()._get_report(
             format=format,
@@ -914,7 +1011,7 @@ class ClassificationReport(ModelReport):
             test data
         """
         if self.multi_class:
-            print('Not applicable for multi-class classification')
+            print("Not applicable for multi-class classification")
             return None
         return self.evaluator.gains_table()
 
@@ -947,17 +1044,17 @@ class ClassificationReport(ModelReport):
         -------
         plot: holoview's holomap object
         """
-        if not(self.multi_class):
-            print('Not applicable for binary classification')
+        if not (self.multi_class):
+            print("Not applicable for binary classification")
             return None
 
-        train_plot = self.evaluator.get_class_distributions()['Train Data'][0]
+        train_plot = self.evaluator.get_class_distributions()["Train Data"][0]
         if self.has_test:
-            test_plot = self.evaluator.get_class_distributions()['Test Data'][0]
+            test_plot = self.evaluator.get_class_distributions()["Test Data"][0]
             if orient == 1:
-                train_plot = train_plot+test_plot
+                train_plot = train_plot + test_plot
             else:
-                train_plot = (train_plot+test_plot).cols(1)
+                train_plot = (train_plot + test_plot).cols(1)
         return train_plot
 
     def get_classification_report(self, orient=0):
@@ -972,17 +1069,17 @@ class ClassificationReport(ModelReport):
         -------
         plot: holoview's holomap object
         """
-        if not(self.multi_class):
-            print('Not applicable for binary classification')
+        if not (self.multi_class):
+            print("Not applicable for binary classification")
             return None
 
-        train_plot = self.evaluator.get_classification_report()['Train Data'][0]
+        train_plot = self.evaluator.get_classification_report()["Train Data"][0]
         if self.has_test:
-            test_plot = self.evaluator.get_classification_report()['Test Data'][0]
+            test_plot = self.evaluator.get_classification_report()["Test Data"][0]
             if orient == 1:
-                train_plot = train_plot+test_plot
+                train_plot = train_plot + test_plot
             else:
-                train_plot = (train_plot+test_plot).cols(1)
+                train_plot = (train_plot + test_plot).cols(1)
         return train_plot
 
     def gains_chart(self, baseline=True, **kwargs):
@@ -1000,7 +1097,7 @@ class ClassificationReport(ModelReport):
         plot: holoview plot object
         """
         if self.multi_class:
-            print('Not applicable for multi-class classification')
+            print("Not applicable for multi-class classification")
             return None
 
         return self.evaluator.gains_chart(baseline=baseline, **kwargs)
@@ -1020,7 +1117,7 @@ class ClassificationReport(ModelReport):
         plot: holoview plot object
         """
         if self.multi_class:
-            print('Not applicable for multi-class classification')
+            print("Not applicable for multi-class classification")
             return None
 
         return self.evaluator.lift_chart(baseline=baseline, **kwargs)
@@ -1038,7 +1135,7 @@ class ClassificationReport(ModelReport):
         plot: holoview plot object
         """
         if self.multi_class:
-            print('Not applicable for multi-class classification')
+            print("Not applicable for multi-class classification")
             return None
 
         return self.evaluator.roc_curve(**kwargs)
@@ -1059,7 +1156,7 @@ class ClassificationReport(ModelReport):
         plot: holoview plot object
         """
         if self.multi_class:
-            print('Not applicable for multi-class classification')
+            print("Not applicable for multi-class classification")
             return None
 
         return self.evaluator.precision_recall_curve()
@@ -1085,12 +1182,20 @@ class ClassificationReport(ModelReport):
         plot: holoview plot object
         """
         if self.multi_class:
-            print('Not applicable for multi-class classification')
+            print("Not applicable for multi-class classification")
             return None
 
         return self.evaluator.threshold_curve(**kwargs)
 
-    def get_report(self, format=".html", file_path="", include_shap=False, errorbuckets_spec=None, n_features=20, cutoff_value=0.5):
+    def get_report(
+        self,
+        format=".html",
+        file_path="",
+        include_shap=False,
+        errorbuckets_spec=None,
+        n_features=20,
+        cutoff_value=0.5,
+    ):
         """
         Generate a consolidate report of model performance and interpretation.
 
@@ -1115,13 +1220,15 @@ class ClassificationReport(ModelReport):
                 top_n_cols - int
                     number of columns to be selected for error analysis
         n_features : int, default=20
-            No. of top features used for interpretation. Applies to dependency plots and 
+        No. of top features used for interpretation. Applies to dependency plots and
         feature importance.
         cutoff_value: float, default=0.5
             Probability cutoff_value for class prediction.
         """
         if not file_path:
-            file_path = "classification_report_at_{}".format(datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+            file_path = "classification_report_at_{}".format(
+                datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            )
 
         super()._get_report(
             format=format,
@@ -1131,7 +1238,7 @@ class ClassificationReport(ModelReport):
             n_features=n_features,
             include_shap_test_error_analysis=False,
             cutoff_value=cutoff_value,
-            )
+        )
 
     def get_metrics(self, vary_thresholds=True, cutoff_value=0.5):
         """Model evaluation metrics as a dataframe.
@@ -1145,7 +1252,9 @@ class ClassificationReport(ModelReport):
         -------
         metrics: holoview object
         """
-        return self.evaluator.get_metrics(vary_thresholds=vary_thresholds, cutoff_value=cutoff_value)
+        return self.evaluator.get_metrics(
+            vary_thresholds=vary_thresholds, cutoff_value=cutoff_value
+        )
 
     def get_evaluation_plots(self, cutoff_value=0.5):
         """Model evaluation plots as a dictionary.

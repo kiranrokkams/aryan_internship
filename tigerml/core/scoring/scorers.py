@@ -1,15 +1,16 @@
 import numpy as np
 import pandas as pd
+from sklearn.metrics import confusion_matrix, mean_squared_error
+
 from tigerml.core.utils import flatten_list
-from sklearn.metrics import mean_squared_error, confusion_matrix
 
 
 def compute_residual(y, yhat):
-    return (y - yhat)
+    return y - yhat
 
 
 def mape(y_true, y_pred):
-    '''Computes Mean Absolute Percent error.
+    """Computes Mean Absolute Percent error.
 
     Ignore values with y_true=0
 
@@ -17,39 +18,41 @@ def mape(y_true, y_pred):
     ----------
     y_true: actual values
     y_hat: predicted values
-    '''
+    """
     yp = y_pred[y_true != 0]
     yt = y_true[y_true != 0]
     return np.mean(np.abs((yt - yp) / yt))
 
 
 def wmape(y_true, y_pred):
-    '''Computes Weighted Mean Absolute Deviation.
+    """Computes Weighted Mean Absolute Deviation.
 
-    Similar to mape but weighted by y_true. This ignores y_true=0 and tends to be higher if the errors are higher for higher y_true values.
+    Similar to mape but weighted by y_true.
+    This ignores y_true=0 and tends to be higher
+    if the errors are higher for higher y_true values.
 
     Parameters
     ----------
     y_true: actual values
     y_hat: predicted values
-    '''
+    """
     return np.sum(np.abs(y_true - y_pred)) / np.sum(y_true)
 
 
 def root_mean_squared_error(*args, **kwargs):
-    '''Computes Root Mean Squared Error.
+    """Computes Root Mean Squared Error.
 
     Parameters
     ----------
     y_true: actual values
     y_hat: predicted values
-    '''
+    """
     return pow(mean_squared_error(*args, **kwargs), 0.5)
 
 
-def confusion_matrix_df(y_train, yhat_train,
-                        y_test=None, yhat_test=None,
-                        normalized=False, flattened=False):
+def confusion_matrix_df(
+    y_train, yhat_train, y_test=None, yhat_test=None, normalized=False, flattened=False
+):
     """Returns the confusion matrix as dataframe.
 
     Parameters
@@ -77,24 +80,48 @@ def confusion_matrix_df(y_train, yhat_train,
     cms = {}
     cm_dfs = {}
     yhat_train = (yhat_train > 0.5).astype(int)
-    cms['train'] = confusion_matrix(y_train, yhat_train)
+    cms["train"] = confusion_matrix(y_train, yhat_train)
     if y_test is not None and yhat_test is not None:
         yhat_test = (yhat_test > 0.5).astype(int)
-        cms['test'] = confusion_matrix(y_test, yhat_test)
+        cms["test"] = confusion_matrix(y_test, yhat_test)
     for dataset in cms:
         if normalized:
-            cms[dataset] = (cms[dataset].astype("float") / cms[dataset].sum(axis=1)[:, np.newaxis])
+            cms[dataset] = (
+                cms[dataset].astype("float") / cms[dataset].sum(axis=1)[:, np.newaxis]
+            )
         cm_dfs[dataset] = pd.DataFrame(cms[dataset])
-        cm_dfs[dataset] = cm_dfs[dataset].rename(columns=dict(zip([x for x in cm_dfs[dataset].columns], [
-            "predicted_{}{}".format(x, "_normalized" if normalized else "") for x in cm_dfs[dataset].columns], )))
+        cm_dfs[dataset] = cm_dfs[dataset].rename(
+            columns=dict(
+                zip(
+                    [x for x in cm_dfs[dataset].columns],
+                    [
+                        "predicted_{}{}".format(x, "_normalized" if normalized else "")
+                        for x in cm_dfs[dataset].columns
+                    ],
+                )
+            )
+        )
     if flattened:
-        classes = cm_dfs['train'].index.values
-        labels = [["predicted_{}_for_{}".format(pred_class, true_class) for pred_class in classes] for true_class in
-                  classes]
+        classes = cm_dfs["train"].index.values
+        labels = [
+            [
+                "predicted_{}_for_{}".format(pred_class, true_class)
+                for pred_class in classes
+            ]
+            for true_class in classes
+        ]
         labels = flatten_list(labels)
-        labels = [label + (" (False Positives)" if "1_for_0" in label else
-                           " (False Negatives)" if "0_for_1" in label else
-                           "") for label in labels]
+        labels = [
+            label
+            + (
+                " (False Positives)"
+                if "1_for_0" in label
+                else " (False Negatives)"
+                if "0_for_1" in label
+                else ""
+            )
+            for label in labels
+        ]
         flat_cm_dict = {}
         for index, label in enumerate(labels):
             flat_cm_dict[label] = {}
@@ -107,6 +134,12 @@ def confusion_matrix_df(y_train, yhat_train,
     cm_df.index = cm_df.index.rename("true_label")
     cm_df.columns.set_names(["dataset", "metric"], inplace=True)
     if normalized:
-        cm_df = cm_df.rename(columns=dict(zip([x for x in cm_df.columns],
-                                              [str(x) + "_normalized" for x in cm_df.columns])))
+        cm_df = cm_df.rename(
+            columns=dict(
+                zip(
+                    [x for x in cm_df.columns],
+                    [str(x) + "_normalized" for x in cm_df.columns],
+                )
+            )
+        )
     return cm_df

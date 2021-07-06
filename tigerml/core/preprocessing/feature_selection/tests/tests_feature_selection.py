@@ -4,8 +4,15 @@ import numpy as np
 import pytest
 from sklearn.datasets import make_classification, make_regression
 from sklearn.linear_model import Ridge
-from sklearn.utils.estimator_checks import check_estimator, parametrize_with_checks
-from tigerml.core.preprocessing.feature_selection import FeatureSelector, FeatureSelectorStatistic
+from sklearn.utils.estimator_checks import (
+    check_estimator,
+    parametrize_with_checks,
+)
+
+from tigerml.core.preprocessing.feature_selection import (
+    FeatureSelector,
+    FeatureSelectorStatistic,
+)
 
 
 @parametrize_with_checks([FeatureSelector(Ridge(alpha=0.5))])

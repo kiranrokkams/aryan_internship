@@ -1,14 +1,23 @@
 """Description: Evaluation Base class."""
 
 
-from tigerml.core.utils.modeling import is_fitted
-
 from tigerml.core.scoring import TEST_PREFIX, TRAIN_PREFIX
+from tigerml.core.utils.modeling import is_fitted
 
 
 class Evaluator:
+    """Evaluator class."""
+
     def __init__(
-        self, model=None, x_train=None, y_train=None, x_test=None, y_test=None, yhat_train=None, yhat_test=None, display_labels=None
+        self,
+        model=None,
+        x_train=None,
+        y_train=None,
+        x_test=None,
+        y_test=None,
+        yhat_train=None,
+        yhat_test=None,
+        display_labels=None,
     ):
         self.model = model
         self.x_train = x_train
@@ -25,10 +34,12 @@ class Evaluator:
 
     @property
     def has_train(self):
+        """Returns train prefix for Evaluator class."""
         return TRAIN_PREFIX in self.datasets
 
     @property
     def has_test(self):
+        """Retuurns test prefix for Evaluator class."""
         return TEST_PREFIX in self.datasets
 
     def remove_metric(self, metric_name):
@@ -51,7 +62,14 @@ class Evaluator:
         """
         self.plots.pop(plot_name)
 
-    def add_metric(self, metric_name, metric_func, more_is_better, display_format=None, default_params={}):
+    def add_metric(
+        self,
+        metric_name,
+        metric_func,
+        more_is_better,
+        display_format=None,
+        default_params={},
+    ):
         """Thie method is used to add custom metric.
 
         Parameters
@@ -99,7 +117,7 @@ class Evaluator:
         plot_func : func
             function to get the plot
 
-        
+
         Examples
         --------
         from tigerml.model_eval.plotters.evaluation.regression import create_scatter
@@ -115,6 +133,8 @@ class Evaluator:
 
     def fit(self, X, y):
         """
+        Fits the model.
+
         Parameters
         ----------
         X : X_train, pd.DataFrame of shape `n x m`

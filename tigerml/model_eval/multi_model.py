@@ -13,7 +13,7 @@ from tigerml.core.scoring import SCORING_OPTIONS
 from tigerml.core.utils import fail_gracefully
 
 hv.extension("bokeh", "matplotlib")
-hv.output(widget_location='bottom')
+hv.output(widget_location="bottom")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -46,8 +46,7 @@ def all_possible_combinations(x: list, min_n: int = 0, max_n: int = None):
     if max_n is None:
         max_n = len(x)
     if (min_n > len(x)) or (max_n > len(x)):
-        raise ValueError(
-            "'min_n' or 'max_n' cannot be greater than length of 'x'")
+        raise ValueError("'min_n' or 'max_n' cannot be greater than length of 'x'")
     if (min_n < 0) or (max_n < 0):
         raise ValueError("'min_n' or 'max_n' cannot be less than 0")
     if min_n > max_n:
@@ -58,7 +57,7 @@ def all_possible_combinations(x: list, min_n: int = 0, max_n: int = None):
     return list_combns
 
 
-def simplify_dataframe(df: pd.DataFrame, col_sep: str = ' - '):
+def simplify_dataframe(df: pd.DataFrame, col_sep: str = " - "):
     """Simplify DataFrame having MultiIndex type index and/or columns."""
     df_new = df.copy()
     if isinstance(df.columns, pd.MultiIndex):
@@ -95,20 +94,20 @@ def density_with_box_plot(data: pd.DataFrame, x: str, by: str = None):
     by : str, default=None
         Column in the `data` to group by.
     """
-    plotter = hvPlot(data, cmap='Category10')
+    plotter = hvPlot(data, cmap="Category10")
     # Density plot
-    density_plot = plotter.density(x, by=by, height=250, xlabel='',
-                                   legend='top_right')
+    density_plot = plotter.density(x, by=by, height=250, xlabel="", legend="top_right")
     # Box plot
-    box_plot = plotter.box(x, by=by, invert=True, height=100, xlabel='')
+    box_plot = plotter.box(x, by=by, invert=True, height=100, xlabel="")
     if by is not None:
         box_plot.opts(box_color=by, show_legend=False, height=125)
     combined_plot = (density_plot + box_plot).cols(1)
     return combined_plot
 
 
-def scatter_plot(data: pd.DataFrame, x: str, y: str,
-                 hover_cols: list = None, by: str = None):
+def scatter_plot(
+    data: pd.DataFrame, x: str, y: str, hover_cols: list = None, by: str = None
+):
     """Create a scatter plot.
 
     Parameters
@@ -131,17 +130,17 @@ def scatter_plot(data: pd.DataFrame, x: str, y: str,
     """
     if hover_cols is None:
         hover_cols = []
-    plotter = hvPlot(data, cmap='Category10')
+    plotter = hvPlot(data, cmap="Category10")
     if by is None:
         plot = plotter.scatter(x, y, hover_cols=hover_cols)
     else:
-        plot = plotter.scatter(x, y, hover_cols=hover_cols,
-                               by=by, legend='top_right')
+        plot = plotter.scatter(x, y, hover_cols=hover_cols, by=by, legend="top_right")
     return plot
 
 
-def create_heatmap(data: pd.DataFrame, x: str, y: str, C: str,
-                   colormap: str = None, title: str = ""):
+def create_heatmap(
+    data: pd.DataFrame, x: str, y: str, C: str, colormap: str = None, title: str = ""
+):
     """Create a heatmap.
 
     Parameters
@@ -247,12 +246,12 @@ class MultiModelComparisonRegression:
     """
 
     def __init__(
-            self,
-            data: pd.DataFrame,
-            group_cols: list,
-            y_true_col: str,
-            y_pred_col: str,
-            y_base_col: str = None
+        self,
+        data: pd.DataFrame,
+        group_cols: list,
+        y_true_col: str,
+        y_pred_col: str,
+        y_base_col: str = None,
     ):
         reqd_cols = group_cols + [y_true_col, y_pred_col]
         if y_base_col is not None:
@@ -267,7 +266,7 @@ class MultiModelComparisonRegression:
 
         self.has_baseline = True if self.y_base_col is not None else False
 
-        default_metrics = ['MAPE', 'WMAPE', 'MAE', 'RMSE']
+        default_metrics = ["MAPE", "WMAPE", "MAE", "RMSE"]
         self.metrics = {}
         for metric in default_metrics:
             self.metrics[metric] = SCORING_OPTIONS.regression.get(metric)
@@ -277,11 +276,19 @@ class MultiModelComparisonRegression:
 
     def _check_if_metrics_df_exists(self):
         if self.metrics_df is None:
-            raise Exception("'metrics_df' has not been computed yet. "
-                            "Use .compute_metrics_all_groups() method first.")
+            raise Exception(
+                "'metrics_df' has not been computed yet. "
+                "Use .compute_metrics_all_groups() method first."
+            )
 
-    def add_metric(self, metric_name, metric_func, more_is_better,
-                   display_format=None, default_params={}):
+    def add_metric(
+        self,
+        metric_name,
+        metric_func,
+        more_is_better,
+        display_format=None,
+        default_params={},
+    ):
         """Add custom metric for multiple model comparison.
 
         Parameters
@@ -352,7 +359,7 @@ class MultiModelComparisonRegression:
         def _func(x):
             metrics_dict = {}
             for metric_name, metric_details in metrics.items():
-                func = metric_details['func']
+                func = metric_details["func"]
                 if "default_params" in metric_details:
                     default_params = metric_details["default_params"]
                 else:
@@ -366,8 +373,9 @@ class MultiModelComparisonRegression:
         else:
             metrics_df = _func(self.data).to_frame().T
 
-        _info = "Computed metrics {} for '{}' vs '{}' grouped by columns {}" \
-            .format(metrics_df.columns.tolist(), actual, predicted, group_by)
+        _info = "Computed metrics {} for '{}' vs '{}' grouped by columns {}".format(
+            metrics_df.columns.tolist(), actual, predicted, group_by
+        )
         _info += " --- Shape: {}".format(metrics_df.shape)
         _LOGGER.info(_info)
         # print(metrics_df.head())
@@ -382,16 +390,15 @@ class MultiModelComparisonRegression:
         combinations.
         """
         self.metrics_df = {}
-        group_combns = \
-            all_possible_combinations(self.group_cols,
-                                      min_n=1,
-                                      max_n=min(2, len(self.group_cols)))
+        group_combns = all_possible_combinations(
+            self.group_cols, min_n=1, max_n=min(2, len(self.group_cols))
+        )
         for group_by_cols in group_combns:
             # Metrics for current predictions
             df_current = self.compute_metrics(
                 actual=self.y_true_col,
                 predicted=self.y_pred_col,
-                group_by=list(group_by_cols)
+                group_by=list(group_by_cols),
             )
             if not self.has_baseline:
                 self.metrics_df[group_by_cols] = df_current.reset_index()
@@ -400,12 +407,13 @@ class MultiModelComparisonRegression:
                 df_baseline = self.compute_metrics(
                     actual=self.y_true_col,
                     predicted=self.y_base_col,
-                    group_by=list(group_by_cols)
+                    group_by=list(group_by_cols),
                 )
-                df = pd.concat({
-                    "Current": df_current,
-                    "Baseline": df_baseline
-                }, axis=0, names=['Prediction Type'])
+                df = pd.concat(
+                    {"Current": df_current, "Baseline": df_baseline},
+                    axis=0,
+                    names=["Prediction Type"],
+                )
                 self.metrics_df[group_by_cols] = df.reset_index()
             # print(self.metrics_df[group_by_cols].head())
 
@@ -415,9 +423,8 @@ class MultiModelComparisonRegression:
         self._check_if_metrics_df_exists()
         df = self.metrics_df[group_by]
         if self.has_baseline:
-            table = df.pivot_table(index=list(group_by),
-                                   columns=['Prediction Type'])
-            table = simplify_dataframe(table, col_sep=' - ')
+            table = df.pivot_table(index=list(group_by), columns=["Prediction Type"])
+            table = simplify_dataframe(table, col_sep=" - ")
         else:
             table = simplify_dataframe(df)
         return table
@@ -452,7 +459,7 @@ class MultiModelComparisonRegression:
         self._check_if_metrics_df_exists()
         df = self.metrics_df[group_by]
         # select_combns = None
-        select_combns = [('MAPE', 'MAE'), ('WMAPE', 'RMSE')]
+        select_combns = [("MAPE", "MAE"), ("WMAPE", "RMSE")]
         plots = {}
         for m1, m2 in combinations(self.metrics, 2):
             if select_combns is not None:
@@ -472,10 +479,12 @@ class MultiModelComparisonRegression:
         df = self.metrics_df[group_by]
         metrics = list(self.metrics.keys())
         if self.has_baseline:
-            df_current = df[df["Prediction Type"] == "Current"] \
-                .set_index(list(group_by))[metrics]
-            df_baseline = df[df["Prediction Type"] == "Baseline"] \
-                .set_index(list(group_by))[metrics]
+            df_current = df[df["Prediction Type"] == "Current"].set_index(
+                list(group_by)
+            )[metrics]
+            df_baseline = df[df["Prediction Type"] == "Baseline"].set_index(
+                list(group_by)
+            )[metrics]
             df = df_current - df_baseline
         else:
             df = df.set_index(list(group_by))[metrics]
@@ -487,38 +496,44 @@ class MultiModelComparisonRegression:
         # Create dict of plots for each metric
         plots = {}
         for metric in self.metrics:
-            more_is_better = self.metrics[metric]['more_is_better']
+            more_is_better = self.metrics[metric]["more_is_better"]
             if self.has_baseline:
-                title = f"Distribution of differences in " \
-                        f"{metric} (Current - Baseline)"
-                colormap = 'RdYlGn' if more_is_better else 'RdYlGn_r'
-                plot = create_heatmap(df, x=x, y=y, C=metric,
-                                      colormap=colormap, title=title)
+                title = (
+                    f"Distribution of differences in " f"{metric} (Current - Baseline)"
+                )
+                colormap = "RdYlGn" if more_is_better else "RdYlGn_r"
+                plot = create_heatmap(
+                    df, x=x, y=y, C=metric, colormap=colormap, title=title
+                )
                 plot.opts(symmetric=True, colorbar=True)
             else:
                 title = f"Distribution of {metric}"
-                colormap = 'Reds_r' if more_is_better else 'Reds'
-                plot = create_heatmap(df, x=x, y=y, C=metric,
-                                      colormap=colormap, title=title)
+                colormap = "Reds_r" if more_is_better else "Reds"
+                plot = create_heatmap(
+                    df, x=x, y=y, C=metric, colormap=colormap, title=title
+                )
             plots[metric] = [plot]
         return plots
 
     def _create_common_elements(self, key, level):
-        self.element_tree[level]["Metric Summary"] = \
-            self.get_metrics_summary(group_by=key)
-        self.element_tree[level]["Metric Distribution"] = \
-            self.plot_metrics_density(group_by=key)
-        self.element_tree[level]["Metric Table"] = \
-            self.get_metrics_table(group_by=key)
-        self.element_tree[level]["Bi-Metric Scatter Plots"] = \
-            self.plot_metrics_scatter(group_by=key)
+        self.element_tree[level]["Metric Summary"] = self.get_metrics_summary(
+            group_by=key
+        )
+        self.element_tree[level]["Metric Distribution"] = self.plot_metrics_density(
+            group_by=key
+        )
+        self.element_tree[level]["Metric Table"] = self.get_metrics_table(group_by=key)
+        self.element_tree[level]["Bi-Metric Scatter Plots"] = self.plot_metrics_scatter(
+            group_by=key
+        )
 
     def _create_1d_elements(self, key, level):
         pass
 
     def _create_2d_elements(self, key, level):
-        self.element_tree[level]["Bi-variate Heatmap"] = \
-            self.plot_bivariate_heatmap(group_by=key)
+        self.element_tree[level]["Bi-variate Heatmap"] = self.plot_bivariate_heatmap(
+            group_by=key
+        )
 
     def _create_report_elements(self):
         self.element_tree.clear()
@@ -548,10 +563,7 @@ class MultiModelComparisonRegression:
         if self.metrics_df is None:
             self.compute_metrics_all_groups()
         self._create_report_elements()
-        report_element = {
-            "Multiple Model Comparison - Regression": self.element_tree
-        }
+        report_element = {"Multiple Model Comparison - Regression": self.element_tree}
         if not file_path:
-            file_path = self._generate_report_name(
-                with_timestamp=with_timestamp)
+            file_path = self._generate_report_name(with_timestamp=with_timestamp)
         create_report(report_element, name=file_path, format=".html")

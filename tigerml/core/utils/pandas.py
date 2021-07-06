@@ -19,12 +19,12 @@ def get_num_cols(df):
     obj_type_num_cols = []
     for col in df.columns:
         try:
-            df[col]+1  # This operation fails for non-numeric columns
+            df[col] + 1  # This operation fails for non-numeric columns
             obj_type_num_cols += [col]
         except TypeError:
             pass
     obj_type_num_cols = [col for col in obj_type_num_cols if col not in normal_num_cols]
-    return sort(normal_num_cols+obj_type_num_cols)
+    return sort(normal_num_cols + obj_type_num_cols)
 
 
 def get_non_num_cols(df):
@@ -53,8 +53,12 @@ def get_bool_cols(df):
         return list()
     dtypes = df.dtypes
     bool_type_1 = dtypes[dtypes == "bool"].index.tolist()
-    bool_type_2 = [col for col in df.columns if set(df[col].unique().tolist()) <= {0, 1} and col not in bool_type_1]
-    return sort(bool_type_1+bool_type_2)
+    bool_type_2 = [
+        col
+        for col in df.columns
+        if set(df[col].unique().tolist()) <= {0, 1} and col not in bool_type_1
+    ]
+    return sort(bool_type_1 + bool_type_2)
 
 
 def convert_to_dt(df):
@@ -64,7 +68,7 @@ def convert_to_dt(df):
     if mask.sum() > 0:
         print(
             "Detected {} columns as datetime format. Converting to datetime".format(
-                list(mask[mask == True].index)
+                list(mask[mask is True].index)
             )
         )
         df.loc[:, mask] = df.loc[:, mask].apply(pd.to_datetime)
@@ -79,7 +83,8 @@ def is_discrete(series_data):
 
 
 def reduce_mem_usage(df, ctg_thresh=0.25, verbose=True):
-    """
+    """Reduce memory usage.
+
     Numerical Type
     - Based on max range of column limiting datatype to np.int8 or np.int16 or
       np.int32 or np.float16 or np.float32

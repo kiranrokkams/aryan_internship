@@ -4,6 +4,7 @@ All plots in this utility are built using holoviews library. Interactive plots w
 """
 
 import os
+
 from tigerml.core.utils import set_logger
 
 from .base import (
@@ -14,9 +15,9 @@ from .base import (
     RegressionReport,
 )
 from .comparison import ClassificationComparison, RegressionComparison
+from .multi_model import MultiModelComparisonRegression
 from .plotters import *
 from .segmented import ClassificationSegmentedReport, RegressionSegmentedReport
-from .multi_model import MultiModelComparisonRegression
 
 # Configure logger for the module
 LOG_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), "logs")

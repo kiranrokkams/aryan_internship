@@ -1,6 +1,5 @@
-from .misc import HTMLText, HTMLBase
 from .HTMLChart import HTMLChart
+from .HTMLComponent import HTMLComponent, HTMLComponentGroup
 from .HTMLImage import HTMLImage
 from .HTMLTable import HTMLTable
-from .HTMLComponent import HTMLComponent, HTMLComponentGroup
-
+from .misc import HTMLBase, HTMLText

@@ -1,38 +1,45 @@
-import six
 import math
 
+import six
 
-round_to_n = lambda x, n: round(x, -int(math.floor(math.log10(abs(x)))) + (n - 1))
+
+def round_to_n(x, n):
+    return round(x, -int(math.floor(math.log10(abs(x)))) + (n - 1))
 
 
 def _do_formatting(value, format_str):
-    """Format value according to format_str, and deal
-    sensibly with format_str if it is missing or invalid.
+    """Format value according to format_str.
+
+    Deal sensibly with format_str if it is missing or invalid.
     """
-    if format_str == '':
+    if format_str == "":
         if type(value) in six.integer_types:
-            format_str = ','
+            format_str = ","
         elif type(value) is float:
-            format_str = 'f'
+            format_str = "f"
         elif type(value) is str:
-            format_str = 's'
-    elif format_str[0] == '.':
-        if format_str.endswith('R'):
+            format_str = "s"
+    elif format_str[0] == ".":
+        if format_str.endswith("R"):
             if type(value) in six.integer_types:
                 value = round_to_n(value, int(format_str[1]))
-                format_str = ','
-        if not format_str.endswith('G'):
+                format_str = ","
+        if not format_str.endswith("G"):
             format_str = format_str + "G"
     try:
         value = format(value, format_str)
-    except:
-        value = format(value, '')
+    except Exception:
+        value = format(value, "")
 
     return value
 
 
-def df_to_table(table, df, colnames=None, col_formatters=None, rounding=None, name=None):
-    """Converts a Pandas DataFrame to a PowerPoint table on the given
+def df_to_table(
+    table, df, colnames=None, col_formatters=None, rounding=None, name=None
+):
+    """Pandas DataFrame to a PowerPoint table.
+
+    Converts a Pandas DataFrame to a PowerPoint table on the given
     Slide of a PowerPoint presentation.
 
     The table is a standard Powerpoint table, and can easily be modified with
@@ -113,7 +120,7 @@ def df_to_table(table, df, colnames=None, col_formatters=None, rounding=None, na
             else:
                 text = _do_formatting(val, col_formatters[col])
 
-            table.table.cell(row+1, col).text = text
+            table.table.cell(row + 1, col).text = text
 
     if name is not None:
         table.name = name
@@ -155,4 +162,3 @@ def df_to_table(table, df, colnames=None, col_formatters=None, rounding=None, na
 #     table = df_to_table(slide, df, **kwargs)
 #     pres.save(filename)
 #     return table
-

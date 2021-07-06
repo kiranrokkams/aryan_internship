@@ -1,0 +1,100 @@
+19-01-2021 17:40:36 - ERROR - tigerml.model_eval.plotters.evaluation.classification::inner::169 - Cannot compute get_metrics. Error - axis 1 is out of bounds for array of dimension 1
+Traceback (most recent call last):
+  File "d:\ta_lab\dev\tigerml\python\tigerml\core\utils\_lib.py", line 167, in inner
+    return func(*args, **kwargs)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 764, in get_metrics
+    return self._get_metrics_for_decision_threshold(threshold=cutoff_value)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 721, in _get_metrics_for_decision_threshold
+    predict_class = pd.Series(predict_.argmax(axis=1)).values
+numpy.AxisError: axis 1 is out of bounds for array of dimension 1
+19-01-2021 17:40:36 - ERROR - tigerml.model_eval.plotters.evaluation.classification::inner::169 - Cannot compute _get_conf_matrix. Error - axis 1 is out of bounds for array of dimension 1
+Traceback (most recent call last):
+  File "d:\ta_lab\dev\tigerml\python\tigerml\core\utils\_lib.py", line 167, in inner
+    return func(*args, **kwargs)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 617, in _get_conf_matrix
+    y_pred = pd.Series(yhat.argmax(axis=1)).values
+numpy.AxisError: axis 1 is out of bounds for array of dimension 1
+19-01-2021 17:40:36 - ERROR - tigerml.model_eval.plotters.evaluation.classification::inner::169 - Cannot compute get_plots. Error - 'str' object has no attribute 'opts'
+Traceback (most recent call last):
+  File "d:\ta_lab\dev\tigerml\python\tigerml\core\utils\_lib.py", line 167, in inner
+    return func(*args, **kwargs)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 815, in get_plots
+    plots_dict["confusion_matrix"] = self.get_confusion_matrix_multiclass(cutoff_value=cutoff_value)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 636, in get_confusion_matrix_multiclass
+    train_plot = self._get_conf_matrix(self.y_train, self.yhat_train).opts(title="Train Data", width=350, height=100)
+AttributeError: 'str' object has no attribute 'opts'
+19-01-2021 17:47:13 - ERROR - tigerml.model_eval.plotters.evaluation.classification::inner::169 - Cannot compute get_metrics. Error - axis 1 is out of bounds for array of dimension 1
+Traceback (most recent call last):
+  File "d:\ta_lab\dev\tigerml\python\tigerml\core\utils\_lib.py", line 167, in inner
+    return func(*args, **kwargs)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 764, in get_metrics
+    return self._get_metrics_for_decision_threshold(threshold=cutoff_value)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 721, in _get_metrics_for_decision_threshold
+    predict_class = pd.Series(predict_.argmax(axis=1)).values
+numpy.AxisError: axis 1 is out of bounds for array of dimension 1
+19-01-2021 17:47:13 - ERROR - tigerml.model_eval.plotters.evaluation.classification::inner::169 - Cannot compute _get_conf_matrix. Error - axis 1 is out of bounds for array of dimension 1
+Traceback (most recent call last):
+  File "d:\ta_lab\dev\tigerml\python\tigerml\core\utils\_lib.py", line 167, in inner
+    return func(*args, **kwargs)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 617, in _get_conf_matrix
+    y_pred = pd.Series(yhat.argmax(axis=1)).values
+numpy.AxisError: axis 1 is out of bounds for array of dimension 1
+19-01-2021 17:47:13 - ERROR - tigerml.model_eval.plotters.evaluation.classification::inner::169 - Cannot compute get_plots. Error - 'str' object has no attribute 'opts'
+Traceback (most recent call last):
+  File "d:\ta_lab\dev\tigerml\python\tigerml\core\utils\_lib.py", line 167, in inner
+    return func(*args, **kwargs)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 815, in get_plots
+    plots_dict["confusion_matrix"] = self.get_confusion_matrix_multiclass(cutoff_value=cutoff_value)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 636, in get_confusion_matrix_multiclass
+    train_plot = self._get_conf_matrix(self.y_train, self.yhat_train).opts(title="Train Data", width=350, height=100)
+AttributeError: 'str' object has no attribute 'opts'
+19-01-2021 19:17:21 - ERROR - tigerml.model_eval.plotters.evaluation.classification::inner::169 - Cannot compute get_metrics. Error - axis 1 is out of bounds for array of dimension 1
+Traceback (most recent call last):
+  File "d:\ta_lab\dev\tigerml\python\tigerml\core\utils\_lib.py", line 167, in inner
+    return func(*args, **kwargs)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 764, in get_metrics
+    return self._get_metrics_for_decision_threshold(threshold=cutoff_value)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 721, in _get_metrics_for_decision_threshold
+    predict_class = pd.Series(predict_.argmax(axis=1)).values
+numpy.AxisError: axis 1 is out of bounds for array of dimension 1
+19-01-2021 19:17:21 - ERROR - tigerml.model_eval.plotters.evaluation.classification::inner::169 - Cannot compute _get_conf_matrix. Error - axis 1 is out of bounds for array of dimension 1
+Traceback (most recent call last):
+  File "d:\ta_lab\dev\tigerml\python\tigerml\core\utils\_lib.py", line 167, in inner
+    return func(*args, **kwargs)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 617, in _get_conf_matrix
+    y_pred = pd.Series(yhat.argmax(axis=1)).values
+numpy.AxisError: axis 1 is out of bounds for array of dimension 1
+19-01-2021 19:17:21 - ERROR - tigerml.model_eval.plotters.evaluation.classification::inner::169 - Cannot compute get_plots. Error - 'str' object has no attribute 'opts'
+Traceback (most recent call last):
+  File "d:\ta_lab\dev\tigerml\python\tigerml\core\utils\_lib.py", line 167, in inner
+    return func(*args, **kwargs)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 815, in get_plots
+    plots_dict["confusion_matrix"] = self.get_confusion_matrix_multiclass(cutoff_value=cutoff_value)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 636, in get_confusion_matrix_multiclass
+    train_plot = self._get_conf_matrix(self.y_train, self.yhat_train).opts(title="Train Data", width=350, height=100)
+AttributeError: 'str' object has no attribute 'opts'
+19-01-2021 20:58:33 - ERROR - tigerml.model_eval.plotters.evaluation.classification::inner::169 - Cannot compute get_metrics. Error - axis 1 is out of bounds for array of dimension 1
+Traceback (most recent call last):
+  File "d:\ta_lab\dev\tigerml\python\tigerml\core\utils\_lib.py", line 167, in inner
+    return func(*args, **kwargs)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 764, in get_metrics
+    return self._get_metrics_for_decision_threshold(threshold=cutoff_value)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 721, in _get_metrics_for_decision_threshold
+    predict_class = pd.Series(predict_.argmax(axis=1)).values
+numpy.AxisError: axis 1 is out of bounds for array of dimension 1
+19-01-2021 20:58:33 - ERROR - tigerml.model_eval.plotters.evaluation.classification::inner::169 - Cannot compute _get_conf_matrix. Error - axis 1 is out of bounds for array of dimension 1
+Traceback (most recent call last):
+  File "d:\ta_lab\dev\tigerml\python\tigerml\core\utils\_lib.py", line 167, in inner
+    return func(*args, **kwargs)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 617, in _get_conf_matrix
+    y_pred = pd.Series(yhat.argmax(axis=1)).values
+numpy.AxisError: axis 1 is out of bounds for array of dimension 1
+19-01-2021 20:58:33 - ERROR - tigerml.model_eval.plotters.evaluation.classification::inner::169 - Cannot compute get_plots. Error - 'str' object has no attribute 'opts'
+Traceback (most recent call last):
+  File "d:\ta_lab\dev\tigerml\python\tigerml\core\utils\_lib.py", line 167, in inner
+    return func(*args, **kwargs)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 815, in get_plots
+    plots_dict["confusion_matrix"] = self.get_confusion_matrix_multiclass(cutoff_value=cutoff_value)
+  File "d:\ta_lab\dev\tigerml\python\tigerml\model_eval\plotters\evaluation\classification.py", line 636, in get_confusion_matrix_multiclass
+    train_plot = self._get_conf_matrix(self.y_train, self.yhat_train).opts(title="Train Data", width=350, height=100)
+AttributeError: 'str' object has no attribute 'opts'

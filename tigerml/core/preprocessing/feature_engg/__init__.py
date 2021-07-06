@@ -1,2 +1,5 @@
-from .transformers import (SupervisedTransformer, UnsupervisedTransformer,
-                           WoeBinningTransformer)
+from .transformers import (
+    SupervisedTransformer,
+    UnsupervisedTransformer,
+    WoeBinningTransformer,
+)

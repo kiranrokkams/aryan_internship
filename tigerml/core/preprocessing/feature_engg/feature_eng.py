@@ -78,7 +78,9 @@ def feature_engg_woe_binning(x_train, y_train, col_bin):
     try:
         from xverse.transformer import WOE
     except ImportError:
-        raise Exception('Could not import WOE from xverse. Please make sure xverse is installed.')
+        raise Exception(
+            "Could not import WOE from xverse. Please make sure xverse is installed."
+        )
     woe_binned = WOE(treat_missing="mode").fit(x_train[[col_bin]], y_train)
     return woe_binned
 
@@ -125,7 +127,7 @@ def feature_engg_woe_binning_transform(data, woe_binner, existing):
     woe_binner : fitted woe binner for each column
 
     Returns
-    --------
+    -------
     Binned data
     """
     main_df = data.copy()
@@ -162,13 +164,17 @@ def unsupervised_binning(
     series: one-dimensional labeled array capable of holding data of any type
     n: None(default); integer; n number of equal-sized buckets
     size_of_bin: None(default); integer; number of data points in each bucket
-    labels: None(default); string array; used as label in resulting bins, its length must be same as
+    labels: None(default); string array; used as
+           label in resulting bins, its length must be same as
            number of resulting bins, if None return only integers indicator of bins
-    quantile: None(default); array of quantiles; buckets cut based on quantiles provided
-    value: None(default); array of numbers(int/float); buckets produced based on values provided
-    size: None(default); number(integer/float); size of each interval/buckets, size = (upper bound-lower bound)
-          of bucket
-    left: True(default); boolean; if True buckets' size counting will start from left, else from right
+    quantile: None(default); array of quantiles;
+              buckets cut based on quantiles provided
+    value: None(default); array of numbers(int/float);
+           buckets produced based on values provided
+    size: None(default); number(integer/float); size of each interval/buckets,
+          size = (upper bound-lower bound) of bucket
+    left: True(default); boolean; if True buckets'
+          size counting will start from left, else from right
 
     Returns
     -------
@@ -264,7 +270,8 @@ def supervised_binning_fit(feature, target, prefix="SPE"):
     feature : str
         Name of the category variable to be encoded.
     prefix : str
-        Default is 'SPE'. The prefex will be appended to encoded variable. Ex: 'SPE_VariableName_FactorName'
+        Default is 'SPE'. The prefex will be appended to encoded variable.
+        Ex: 'SPE_VariableName_FactorName'
 
     Returns
     -------
@@ -284,7 +291,8 @@ def supervised_binning_transform(feature, discretizer):
     feature : str
         Name of the category variable to be encoded.
     prefix : str
-        Default is 'SPE'. The prefex will be appended to encoded variable. Ex: 'SPE_VariableName_FactorName'
+        Default is 'SPE'. The prefex will be appended to encoded variable.
+        Ex: 'SPE_VariableName_FactorName'
 
     Returns
     -------

@@ -1,13 +1,14 @@
+import logging
+
 import holoviews as hv
 import numpy as np
 import pandas as pd
 from hvplot import hvPlot
 
+from tigerml.core.scoring import SCORING_OPTIONS, compute_residual
 from tigerml.core.utils import fail_gracefully
-from tigerml.core.scoring import compute_residual, SCORING_OPTIONS
 
 from .base import Evaluator
-import logging
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -37,12 +38,16 @@ def create_residuals_histogram(residuals, x_label="residuals"):
     """
     # Histogram showing the distribution of residuals with test data
     hist = (
-        hvPlot(pd.DataFrame({x_label: residuals})).hist(x_label, width=150, invert=True, height=380, alpha=0.7)
+        hvPlot(pd.DataFrame({x_label: residuals})).hist(
+            x_label, width=150, invert=True, height=380, alpha=0.7
+        )
     ).opts(xrotation=45)
     return hist
 
 
 class RegressionEvaluation(Evaluator):
+    """Regression evaluation class."""
+
     def __init__(
         self,
         model=None,
@@ -56,6 +61,8 @@ class RegressionEvaluation(Evaluator):
         residual_test=None,
     ):
         """
+        Regression evaluation class.
+
         Parameters
         ----------
         model : a `Scikit-Learn` Regressor
@@ -63,7 +70,10 @@ class RegressionEvaluation(Evaluator):
         """
         super().__init__(model, x_train, y_train, x_test, y_test, yhat_train, yhat_test)
         self.metrics = SCORING_OPTIONS.regression.copy()
-        self.plots = {"residual_plot": self.residuals_plot, "actual_v_predicted": self.prediction_error_plot}
+        self.plots = {
+            "residual_plot": self.residuals_plot,
+            "actual_v_predicted": self.prediction_error_plot,
+        }
 
         super().remove_metric("Explained Variance")
         self.residual_train = residual_train
@@ -89,7 +99,9 @@ class RegressionEvaluation(Evaluator):
             color="black", line_width=2.0,
         )
 
-        train_scatter = create_scatter(self.yhat_train, self.residual_train,).opts(title="Train Data")
+        train_scatter = create_scatter(self.yhat_train, self.residual_train,).opts(
+            title="Train Data"
+        )
         train_hist = create_residuals_histogram(residuals=self.residual_train)
 
         train_scatter = (train_scatter * line).opts(
@@ -98,7 +110,9 @@ class RegressionEvaluation(Evaluator):
         train_plot = (train_scatter + train_hist).cols(2)
 
         if self.has_test:
-            test_scatter = create_scatter(self.yhat_test, self.residual_test,).opts(title="Test Data")
+            test_scatter = create_scatter(self.yhat_test, self.residual_test,).opts(
+                title="Test Data"
+            )
             test_hist = create_residuals_histogram(residuals=self.residual_test)
             test_scatter = (test_scatter * line).opts(
                 legend_position="top_left", width=380, height=380, xlabel="predicted"
@@ -144,9 +158,9 @@ class RegressionEvaluation(Evaluator):
         max_val = max(max_vals)
         identity = [min_val, max_val]
         # Identity Line
-        id_line = hvPlot(pd.DataFrame({"actuals": identity, "predicted": identity})).line(
-            x="actuals", y="predicted", label="identity"
-        )
+        id_line = hvPlot(
+            pd.DataFrame({"actuals": identity, "predicted": identity})
+        ).line(x="actuals", y="predicted", label="identity")
         id_line.opts(
             color="red", line_dash="dashed", line_width=2.0,
         )
@@ -161,15 +175,23 @@ class RegressionEvaluation(Evaluator):
         used to detect noise or `heteroscedasticity` along a range of the target
         domain.
         """
-        train_scatter = create_scatter(self.y_train, self.yhat_train, x_label="actuals", y_label="predicted")
+        train_scatter = create_scatter(
+            self.y_train, self.yhat_train, x_label="actuals", y_label="predicted"
+        )
         train_identity_line = self._create_identity_line()
-        train_plot = (train_scatter * train_identity_line).opts(legend_position="top_left", width=500, height=500,)
+        train_plot = (train_scatter * train_identity_line).opts(
+            legend_position="top_left", width=500, height=500,
+        )
         plot = train_plot.opts(title="Train Data")
         # best_fit_line = self.create_best_fit_line()
         if self.has_test:
-            test_scatter = create_scatter(self.y_test, self.yhat_test, x_label="actuals", y_label="predicted")
+            test_scatter = create_scatter(
+                self.y_test, self.yhat_test, x_label="actuals", y_label="predicted"
+            )
             test_identity_line = self._create_identity_line()
-            test_plot = (test_scatter * test_identity_line).opts(legend_position="top_left", width=500, height=500,)
+            test_plot = (test_scatter * test_identity_line).opts(
+                legend_position="top_left", width=500, height=500,
+            )
             plot = (plot + test_plot.opts(title="Test Data")).cols(2)
         return plot
 
@@ -188,7 +210,9 @@ class RegressionEvaluation(Evaluator):
                 params = []
                 params.append(self.y_train)
                 params.append(self.yhat_train)
-                metrics_dict[metric]["train"] = round(func(*params, **default_params), 4)
+                metrics_dict[metric]["train"] = round(
+                    func(*params, **default_params), 4
+                )
             if self.has_test:
                 params = []
                 params.append(self.y_test)
@@ -216,6 +240,8 @@ class RegressionEvaluation(Evaluator):
 
 
 class RegressionComparisonMixin:
+    """Regression comparison mixin class."""
+
     def perf_metrics(self):
         """Returns a HTML table for the regression metrics for all the models given as list input.
 
@@ -227,18 +253,30 @@ class RegressionComparisonMixin:
         for model_name in self.reporters:
             current_metrics = self.reporters[model_name].evaluator.get_metrics()
             current_metrics.index = [model_name]
-            self.performance_metrics = pd.concat([self.performance_metrics, current_metrics], axis=0)
-        self.performance_metrics.columns = self.performance_metrics.columns.droplevel(level=1)  # no train test
+            self.performance_metrics = pd.concat(
+                [self.performance_metrics, current_metrics], axis=0
+            )
+        self.performance_metrics.columns = self.performance_metrics.columns.droplevel(
+            level=1
+        )  # no train test
         from tigerml.core.reports.html import HTMLTable, preset_styles
 
         table = HTMLTable(self.performance_metrics)
         bad_metrics = ["MAPE", "WMAPE", "MAE", "RMSE"]
         table.apply_conditional_format(
-            cols=[x for x in self.performance_metrics.columns if all([col not in x for col in bad_metrics])],
+            cols=[
+                x
+                for x in self.performance_metrics.columns
+                if all([col not in x for col in bad_metrics])
+            ],
             style=preset_styles.more_is_good_2colors,
         )
         table.apply_conditional_format(
-            cols=[x for x in self.performance_metrics.columns if any([col in x for col in bad_metrics])],
+            cols=[
+                x
+                for x in self.performance_metrics.columns
+                if any([col in x for col in bad_metrics])
+            ],
             style=preset_styles.less_is_good_2colors,
         )
 
@@ -262,11 +300,17 @@ class RegressionComparisonMixin:
         for model_name in self.reporters:
             if best_fits is None:
                 best_fits = self.reporters[model_name].evaluator._create_identity_line()
-            current_plot = (self.reporters[model_name].evaluator.prediction_error_plot().opts(title=model_name)).opts(
+            current_plot = (
+                self.reporters[model_name]
+                .evaluator.prediction_error_plot()
+                .opts(title=model_name)
+            ).opts(
                 title=model_name, width=plot_size, height=plot_size, show_legend=False
             )
             current_best_fit = self.reporters[model_name].evaluator._compute_best_fit()
-            best_fit_line = hvPlot(current_best_fit).line(x="actuals", y="predicted", label=f"{model_name}")
+            best_fit_line = hvPlot(current_best_fit).line(
+                x="actuals", y="predicted", label=f"{model_name}"
+            )
             best_fits *= best_fit_line
             if scatters is None:
                 scatters = current_plot
@@ -306,16 +350,27 @@ class RegressionComparisonMixin:
         """
         dataset = pd.DataFrame()
         for model_name in self.reporters:
-            dataset = pd.concat([dataset, pd.Series(self.reporters[model_name].evaluator.residual_train)], axis=1)
+            dataset = pd.concat(
+                [
+                    dataset,
+                    pd.Series(self.reporters[model_name].evaluator.residual_train),
+                ],
+                axis=1,
+            )
         dataset.columns = self.reporters.keys()
         residual_distribution = dataset.hvplot.kde(
-            alpha=0.7, ylabel="density", xlabel="residuals", title="Residual Distribution", legend="top_right",
+            alpha=0.7,
+            ylabel="density",
+            xlabel="residuals",
+            title="Residual Distribution",
+            legend="top_right",
         )
         return residual_distribution
 
     def get_performance_report(self):
-        """Return a consolidate dictionary contains regression specific comparative matrices values and different
-        performance plots for all the input models.
+        """Return a consolidate dictionary contains regression specific comparative matrices values and different.
+
+        Performance plots for all the input models.
 
         Returns
         -------
@@ -327,4 +382,3 @@ class RegressionComparisonMixin:
         perf_dict["residual_plot"] = self.residual_plot()
         perf_dict["residual_distribution"] = self.residual_distribution()
         return perf_dict
-

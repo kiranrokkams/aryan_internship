@@ -1,10 +1,10 @@
-from ._lib import DictObject
 import numpy as np
 import pandas as pd
 
+from ._lib import DictObject
 
 MIN_CUTOFF_FOR_KEY_HEURISTIC = 90
-NA_VALUES = [np.NaN, pd.NaT, None, 'NA']
+NA_VALUES = [np.NaN, pd.NaT, None, "NA"]
 SUMMARY_KEY_MAP = DictObject(
     {
         "variable_names": "Variable Name",
@@ -33,4 +33,3 @@ SUMMARY_KEY_MAP = DictObject(
         "abs_corr_coef": "Abs Corr Coef",
     }
 )
-

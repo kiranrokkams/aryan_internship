@@ -1,16 +1,16 @@
-from .regression import (
-    RegressionEvaluation, 
-    RegressionComparisonMixin,
-    create_scatter,
-    create_residuals_histogram
-    )
 from .classification import (
+    ClassificationComparisonMixin,
+    ClassificationEvaluation,
     create_pr_curve,
-    gains_table,
-    gains_chart,
-    lift_chart,
     create_roc_curve,
     create_threshold_chart,
-    ClassificationEvaluation, 
-    ClassificationComparisonMixin,
-    )
+    gains_chart,
+    gains_table,
+    lift_chart,
+)
+from .regression import (
+    RegressionComparisonMixin,
+    RegressionEvaluation,
+    create_residuals_histogram,
+    create_scatter,
+)

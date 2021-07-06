@@ -1,36 +1,39 @@
+from datetime import datetime
+
 import pandas as pd
 from sklearn.pipeline import Pipeline
 from sklearn.utils.multiclass import type_of_target
 
 from tigerml.core.reports import create_report
-from datetime import datetime
+from tigerml.core.utils import fail_gracefully
 
 from .base import (
     ModelReport,
+    print_dict_tree,
     set_x_type,
     set_y_type,
     verify_lengths,
     verify_x_type,
     verify_y_type,
-    print_dict_tree
 )
-
 from .plotters.evaluation import (
     ClassificationComparisonMixin,
     RegressionComparisonMixin,
 )
-from tigerml.core.utils import fail_gracefully
 from .plotters.interpretation import Algo, get_shap_summary_plot
 
 algo_object = Algo()
 
 
 class MultiModelReport:
-    """Fits and scores the models given in the list format to ClassificationComparison and RegressionComaparison
-    classes.
+    """Fits and scores the models given in the list format to ClassificationComparison and.
+
+    RegressionComaparison classes.
     """
 
-    def __init__(self, y, models, algo, x, yhats, refit=False, display_labels=None,):
+    def __init__(
+        self, y, models, algo, x, yhats, refit=False, display_labels=None,
+    ):
         self.y = y
         self.models = models
         self.algo = algo
@@ -52,29 +55,41 @@ class MultiModelReport:
         self.x = set_x_type(self.x)
         self.y = set_y_type(self.y, multi_class=self.multi_class)
         verify_lengths(self.y, self.x)
-        if not self.models is None:
+        if self.models is not None:
             if len(self.models) <= 1:
-                raise ValueError("MultiModelReport requires more than 1 model to be passed.")
+                raise ValueError(
+                    "MultiModelReport requires more than 1 model to be passed."
+                )
             if not (isinstance(self.models, dict) or isinstance(self.models, list)):
-                raise ValueError("MultiModelReport requires more than 1 model to be passed.")
+                raise ValueError(
+                    "MultiModelReport requires more than 1 model to be passed."
+                )
             self._interpertation = True
 
-        if not self.yhats is None:
+        if self.yhats is not None:
             if len(self.yhats) <= 1:
-                raise ValueError("MultiModelReport requires more than 1 yhat to be passed.")
+                raise ValueError(
+                    "MultiModelReport requires more than 1 yhat to be passed."
+                )
             if not isinstance(self.yhats, dict):
-                raise ValueError("MultiModelReport requires more than 1 key value pair yhat to be passed as {'model_name': yhat}")
+                raise ValueError(
+                    "MultiModelReport requires more than 1 key value pair yhat to be passed as {'model_name': yhat}"
+                )
             for model_name in self.yhats:
                 verify_y_type(self.yhats[model_name])
                 verify_lengths(self.yhats[model_name], self.y)
-                self.yhats[model_name] = set_y_type(self.yhats[model_name], multi_class=self.multi_class)
+                self.yhats[model_name] = set_y_type(
+                    self.yhats[model_name], multi_class=self.multi_class
+                )
             self._interpertation = False
 
         if self.yhats is None:
             if self.models is None:
                 raise ValueError("Either yhats or models required")
             elif self.x is None:
-                raise ValueError("Requires x when models are provided and yhats is None")
+                raise ValueError(
+                    "Requires x when models are provided and yhats is None"
+                )
 
     def _create_standardized_report_dict(self):
         """Returns a dict of models with model details which is used in creating the comparison reports."""
@@ -85,8 +100,12 @@ class MultiModelReport:
                     self.model_names,
                     [
                         ModelReport(
-                            model=self.models[model], x_train=self.x, y_train=self.y, algo=self.algo, refit=self.refit,
-                            display_labels=self.display_labels
+                            model=self.models[model],
+                            x_train=self.x,
+                            y_train=self.y,
+                            algo=self.algo,
+                            refit=self.refit,
+                            display_labels=self.display_labels,
                         )
                         for model in self.models
                     ],
@@ -103,19 +122,35 @@ class MultiModelReport:
             # Ensure there are do duplicate names - will happen if self.models belong to the same class
             if len(set(self.model_names)) != len(self.model_names):
                 duplicates = list(
-                    set([x for idx, x in enumerate(self.model_names) if x in self.model_names[idx + 1 :]])
+                    set(
+                        [
+                            x
+                            for idx, x in enumerate(self.model_names)
+                            if x in self.model_names[idx + 1 :]
+                        ]
+                    )
                 )
                 for duplicate in duplicates:
                     for index, idx in enumerate(
-                        [idx for idx, name in enumerate(self.model_names) if name == duplicate]
+                        [
+                            idx
+                            for idx, name in enumerate(self.model_names)
+                            if name == duplicate
+                        ]
                     ):
                         self.model_names[idx] = f"{duplicate} ({index})"
             return dict(
                 zip(
                     self.model_names,
                     [
-                        ModelReport(model=model, x_train=self.x, y_train=self.y, algo=self.algo, refit=self.refit,
-                                    display_labels=self.display_labels)
+                        ModelReport(
+                            model=model,
+                            x_train=self.x,
+                            y_train=self.y,
+                            algo=self.algo,
+                            refit=self.refit,
+                            display_labels=self.display_labels,
+                        )
                         for model in self.models
                     ],
                 )
@@ -127,8 +162,12 @@ class MultiModelReport:
                     self.model_names,
                     [
                         ModelReport(
-                            x_train=self.x, y_train=self.y, yhat_train=self.yhats[model_name], algo=self.algo,
-                            refit=self.refit, display_labels=self.display_labels
+                            x_train=self.x,
+                            y_train=self.y,
+                            yhat_train=self.yhats[model_name],
+                            algo=self.algo,
+                            refit=self.refit,
+                            display_labels=self.display_labels,
                         )
                         for model_name in self.yhats
                     ],
@@ -144,8 +183,11 @@ class MultiModelReport:
         """
         feature_importances = {}
         for model_name in self.reporters:
-            feature_importances[model_name] = self.reporters[model_name].explainer.get_feature_importances(
-                self.reporters[model_name].explainer.x_train)
+            feature_importances[model_name] = self.reporters[
+                model_name
+            ].explainer.get_feature_importances(
+                self.reporters[model_name].explainer.x_train
+            )
         return feature_importances
 
     def shap_summary_plots(self):
@@ -176,11 +218,21 @@ class MultiModelReport:
         """
         if algo_object.is_regression(self.algo):
             perf_dict = self.get_performance_report()
-            self.element_tree["performance"]["performance_metrics"] = perf_dict["performance_metrics"]
-            self.element_tree["performance"]["prediction_error"] = perf_dict["prediction_error"]["best_fit"]
-            self.element_tree["residual_analysis"]["residual_distribution"] = perf_dict["residual_distribution"]
-            self.element_tree["residual_analysis"]["actual_vs_predicted"] = perf_dict["prediction_error"]["actual_vs_predicted"]
-            self.element_tree["residual_analysis"]["predicted_vs_residuals"] = perf_dict["residual_plot"]["predicted_vs_residuals"]
+            self.element_tree["performance"]["performance_metrics"] = perf_dict[
+                "performance_metrics"
+            ]
+            self.element_tree["performance"]["prediction_error"] = perf_dict[
+                "prediction_error"
+            ]["best_fit"]
+            self.element_tree["residual_analysis"]["residual_distribution"] = perf_dict[
+                "residual_distribution"
+            ]
+            self.element_tree["residual_analysis"]["actual_vs_predicted"] = perf_dict[
+                "prediction_error"
+            ]["actual_vs_predicted"]
+            self.element_tree["residual_analysis"][
+                "predicted_vs_residuals"
+            ] = perf_dict["residual_plot"]["predicted_vs_residuals"]
         elif algo_object.is_classification(self.algo):
             perf_dict = self.get_performance_report(cutoff_value=cutoff_value)
             self.element_tree["performance"] = perf_dict
@@ -200,28 +252,34 @@ class MultiModelReport:
     def _build_full_comp_element_tree(self):
         self.element_tree = {}
         if algo_object.is_regression(self.algo):
-            self.element_tree["performance"] = {"performance_metrics": {},
-                                                "prediction_error": {}}
-            self.element_tree["residual_analysis"] = {"residual_distribution": {},
-                                                      "actual_vs_predicted": {},
-                                                      "predicted_vs_residuals": {}}
+            self.element_tree["performance"] = {
+                "performance_metrics": {},
+                "prediction_error": {},
+            }
+            self.element_tree["residual_analysis"] = {
+                "residual_distribution": {},
+                "actual_vs_predicted": {},
+                "predicted_vs_residuals": {},
+            }
         elif algo_object.is_classification(self.algo):
-            self.element_tree["performance"] = {"performance_metrics": {},
-                                                "confusion_matrices": {},
-                                                "gains_charts": {},
-                                                "lift_charts": {},
-                                                "roc_curves": {},
-                                                "precision_recall_curves": {},
-                                                "threshold_analysis": {},}
+            self.element_tree["performance"] = {
+                "performance_metrics": {},
+                "confusion_matrices": {},
+                "gains_charts": {},
+                "lift_charts": {},
+                "roc_curves": {},
+                "precision_recall_curves": {},
+                "threshold_analysis": {},
+            }
         if self._interpertation:
             self.element_tree["interpretation"] = {"feature_importances": {}}
 
     def show_element_tree(self, expand_def=False):
         """Print element tree."""
         if self._interpertation:
-            self.element_tree['interpretation']['feature_importances'] = {}
+            self.element_tree["interpretation"]["feature_importances"] = {}
         if algo_object.is_classification(self.algo):
-            self.element_tree['performance']['threshold_analysis'] = {}
+            self.element_tree["performance"]["threshold_analysis"] = {}
         print_dict_tree(self.element_tree, 0, expand_def=expand_def)
 
     def add_report_element(self, element_name, element_func):
@@ -317,13 +375,13 @@ class ClassificationComparison(MultiModelReport, ClassificationComparisonMixin):
     """
 
     def __init__(
-            self,
-            y: pd.Series,
-            models=None,
-            x: pd.DataFrame=None,
-            yhats=None,
-            refit=False,
-            display_labels: dict = None,
+        self,
+        y: pd.Series,
+        models=None,
+        x: pd.DataFrame = None,
+        yhats=None,
+        refit=False,
+        display_labels: dict = None,
     ):
 
         super().__init__(
@@ -410,12 +468,7 @@ class RegressionComparison(MultiModelReport, RegressionComparisonMixin):
     """
 
     def __init__(
-            self,
-            y: pd.Series,
-            models=None,
-            x: pd.DataFrame=None,
-            yhats=None,
-            refit=False
+        self, y: pd.Series, models=None, x: pd.DataFrame = None, yhats=None, refit=False
     ):
 
         super().__init__(
@@ -424,7 +477,8 @@ class RegressionComparison(MultiModelReport, RegressionComparisonMixin):
             algo=algo_object.regression,
             x=x,
             yhats=yhats,
-            refit=refit)
+            refit=refit,
+        )
 
     def get_report(self, file_path=""):
         """Generate a consolidate report of regression comparison for multiple models.
@@ -439,4 +493,3 @@ class RegressionComparison(MultiModelReport, RegressionComparisonMixin):
             file_path = f'regression_comparison_report_at_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
 
         super()._get_report(file_path=file_path)
-

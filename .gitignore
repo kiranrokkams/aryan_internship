@@ -1,1 +1,56 @@
+# Ignore IDE folders
+.idea
+.vscode
+*.swp
+
+# Ignore Python build folders
+*.egg-info/
+python/build/
+dist/
+docs/build/doctrees/
+docs/build/html/_static/fonts/
+docs/build/html/_sources/
+
+# Ignore R
+.Rproj.user
+*.zip
+*.tar.gz
+.Rhistory
+*.Rcheck
+R/*.html
+R/cheetah/packrat/lib*
+*.log
+*.log.*
+**/logs/
+
+
+# Ignore file types
 *.pyc
+*.pyd
+*.so
+.ipynb_checkpoints
+*.pdf
+*.png
+*.jpg
+*.JPG
+*.xlsx
+*.pptx
+
+
+#Ignore private files
+rough_work.*
+InputData.csv
+intoutput/
+int_output/
+automl_test_data
+examples/
+data_exploration_report*
+python/wheelhouse
+conda-packages/
+
+python/.pytest_cache
+python/tigerml-local/
+
+.hypothesis
+**/.hypothesis
+/python/tigerml/.hypothesis/

@@ -1,15 +1,16 @@
 import os
 import os.path as op
 import platform
-from contextlib import contextmanager
 import shutil
 import tempfile
 import time
+from contextlib import contextmanager
+
 import yaml
 from invoke import Collection, UnexpectedExit, task
 
 # Some default values
-PACKAGE_NAME = "ta_lib"
+PACKAGE_NAME = "tigerml"
 ENV_PREFIX = "ta-lib"
 ENV_PREFIX_PYSPARK = "ta-lib-pyspark"
 NUM_RETRIES = 10
@@ -22,11 +23,13 @@ DEV_ENV = "dev"  # one of ['dev', 'run', 'test']
 SLEEP_TIME = 1
 
 HERE = op.dirname(op.abspath(__file__))
-SOURCE_FOLDER = op.join(HERE, "src", PACKAGE_NAME)
-TESTS_FOLDER = op.join(HERE, 'tests')
+# SOURCE_FOLDER = op.join(HERE, "src", PACKAGE_NAME)
+SOURCE_FOLDER = op.join(HERE, PACKAGE_NAME)
+TESTS_FOLDER = op.join(HERE, PACKAGE_NAME)
 CONDA_ENV_FOLDER = op.join(HERE, "deploy", "conda_envs")
 PYSPARK_ENV_FOLDER = op.join(HERE, "deploy", "pyspark")
 NOTEBOOK_FOLDER = op.join(HERE, "notebooks", "tests")
+PACKAGE_LIST = ['model_eval/tests', 'core/tests']
 
 _TASK_COLLECTIONS = []
 
@@ -37,9 +40,11 @@ def _get_env_name(platform, env):
     # FIXME: do we need platform ?
     return f"{ENV_PREFIX}-{env}"
 
+
 def _get_env_name_pyspark(platform, env):
     # FIXME: do we need platform ?
     return f"{ENV_PREFIX_PYSPARK}-{env}"
+
 
 def _change_permissions_recursive(path, mode):
     for root, dirs, files in os.walk(path, topdown=False):
@@ -166,6 +171,15 @@ def setup_env(c, platform=PLATFORM, env=DEV_ENV, force=False):
 
     out = c.run(f"conda create --name {env_name} --file {env_file}  {force_flag} -y")
 
+    # check for jupyterlab
+    with open(env_file, "r") as fp:
+        env_cfg = fp.read()
+
+    # installating jupyter lab extensions
+    extensions_file = op.abspath(op.join(CONDA_ENV_FOLDER, "jupyterlab_extensions.yml"))
+    with open(extensions_file) as fp:
+        extensions = yaml.safe_load(fp)
+
     # install the code-template modules
     with py_env(c, env_name):
 
@@ -174,7 +188,29 @@ def setup_env(c, platform=PLATFORM, env=DEV_ENV, force=False):
             c.run(f"pip install -r {req_file} --no-deps")
 
         # install the current package
-        c.run(f"pip install -e {HERE}")
+        pkg_dir = op.join(HERE)
+        os.chdir(pkg_dir)
+        c.run(f"pip install -e {pkg_dir}") 
+        os.chdir(HERE)
+
+        is_jupyter = False
+        if "jupyterlab-" in env_cfg:
+            is_jupyter = True
+
+        if is_jupyter:
+            # install jupyterlab extensions
+            for extension in extensions["extensions"]:
+                extn_name = "@{channel}/{name}@{version}".format(**extension)
+                c.run(f"jupyter labextension install --no-build {extn_name}",)
+
+            out = c.run("jupyter lab build")
+
+    # FIXME: create default folders that are expected. these need to be handled
+    # when convering to cookiecutter templates
+    os.makedirs(op.join(HERE, "logs"), exist_ok=True)
+    os.makedirs(op.join(HERE, "mlruns"), exist_ok=True)
+    os.makedirs(op.join(HERE, "data"), exist_ok=True)
+
 
 @task(
     help={
@@ -221,9 +257,7 @@ def setup_env_pyspark(c, platform=PLATFORM, env=DEV_ENV, force=True):
         env_cfg = fp.read()
 
     # installing jupyter lab extensions
-    extensions_file = op.abspath(
-        op.join(CONDA_ENV_FOLDER, "jupyterlab_extensions.yml")
-    )
+    extensions_file = op.abspath(op.join(CONDA_ENV_FOLDER, "jupyterlab_extensions.yml"))
     with open(extensions_file) as fp:
         extensions = yaml.safe_load(fp)
 
@@ -235,7 +269,10 @@ def setup_env_pyspark(c, platform=PLATFORM, env=DEV_ENV, force=True):
             c.run(f"pip install -r {req_file} --no-deps")
 
         # install the current package
-        c.run(f"pip install -e {HERE}") # Todo: Alternative is a separate src folder for pyspark modules only
+        pkg_dir = op.join(HERE)
+        os.chdir(pkg_dir)
+        c.run(f"pip install -e {pkg_dir}") # Todo: Alternative is a separate src folder for pyspark modules only
+        os.chdir(HERE)
 
         is_jupyter = False
         if "jupyterlab-" in env_cfg:
@@ -254,6 +291,7 @@ def setup_env_pyspark(c, platform=PLATFORM, env=DEV_ENV, force=True):
     os.makedirs(op.join(HERE, "logs"), exist_ok=True)
     os.makedirs(op.join(HERE, "mlruns"), exist_ok=True)
     os.makedirs(op.join(HERE, "data"), exist_ok=True)
+
 
 @task(name="setup_addon")
 def setup_addon(
@@ -345,37 +383,6 @@ def refresh_version(c, platform=PLATFORM, env=DEV_ENV):
     return res.stdout
 
 
-@task(
-    name="run-notebooks",
-    help={
-        "template": (
-            "Specifies the template folder to run"
-            "``{regression|classification|all}``"
-            "If all then all the templates are run."
-        ),
-        "notebookid": "Specifies id of notebooks. Must be one of ``{01|02|03|all}``",
-        "timeout": "Maximum execution time beyond which the notebook returns an exception. default is 600 secs.",
-        "refresh": "If `True`, notebooks are run and if successful refresh is also done else, notebooks are run for errors.",
-    },
-)
-def run_notebook(
-    c,
-    platform=PLATFORM,
-    env=DEV_ENV,
-    template="all",
-    notebookid="all",
-    timeout=600,
-    refresh=False,
-):
-    """Run notebooks to checks for any errors."""
-    env_name = _get_env_name(platform, env)
-    with py_env(c, env_name):
-        res = c.run(
-            f"python {NOTEBOOK_FOLDER}/utils.py {template} {notebookid} {timeout} {refresh}"
-        )
-    return res.stdout
-
-
 @task(name="info")
 def setup_info(c, platform=PLATFORM, env=DEV_ENV):
     env_name = _get_env_name(platform, env)
@@ -388,8 +395,8 @@ def setup_info(c, platform=PLATFORM, env=DEV_ENV):
 def _build_docker_image(c):
     with tempfile.TemporaryDirectory() as tempdir:
         docker_file = op.join(HERE, "deploy", "docker", "Dockerfile")
-        shutil.copyfile(docker_file, op.join(tempdir,'Dockerfile'))
-        docker_file = op.join(tempdir,'Dockerfile')
+        shutil.copyfile(docker_file, op.join(tempdir, "Dockerfile"))
+        docker_file = op.join(tempdir, "Dockerfile")
         template = op.basename(HERE)
         if template == "regression-py":
             tag = "ct-reg-py"
@@ -401,9 +408,11 @@ def _build_docker_image(c):
             tag = "ct-rtm-py"
         else:
             raise ValueError(f"Unknown template : {template}")
-        shutil.copytree(op.join(HERE, "deploy"), op.join(tempdir,"deploy"))
-        shutil.copytree(op.join(HERE, "production"), op.join(tempdir,"production"))
-        shutil.copytree(op.join(HERE, "src", "ta_lib"), op.join(tempdir, "src", "ta_lib"))
+        shutil.copytree(op.join(HERE, "deploy"), op.join(tempdir, "deploy"))
+        shutil.copytree(op.join(HERE, "production"), op.join(tempdir, "production"))
+        shutil.copytree(
+            op.join(HERE, "src", "ta_lib"), op.join(tempdir, "src", "ta_lib")
+        )
         shutil.copyfile(op.join(HERE, "setup.py"), op.join(tempdir, "setup.py"))
         shutil.copyfile(op.join(HERE, "setup.cfg"), op.join(tempdir, "setup.cfg"))
         build_context = tempdir
@@ -416,6 +425,7 @@ def _build_docker_image(c):
             "Specifies the platform spec. Must be of the form "
             "``{windows|linux}-{cpu|gpu}-{64|32}``"
         ),
+        #"env": "Specifies the enviroment type. Must be one of ``{dev|test|run}``",
         "force": "If ``True``, any pre-existing environment with the same name will be overwritten",
     }
 )
@@ -426,7 +436,7 @@ def setup_ci_env(c, platform=PLATFORM, force=False):
     ``env/{platform}-{env}.yml``. To overwrite an existing environment with the
     same name, set the flag ``force`` to ``True``.
     """
-    env = 'ci'
+    env = "ci"
     force_flag = "" if not force else "--force"
     env_file = op.abspath(op.join(CONDA_ENV_FOLDER, f"{platform}-{env}.lock"))
     req_file = op.abspath(
@@ -450,7 +460,11 @@ def setup_ci_env(c, platform=PLATFORM, force=False):
             c.run(f"pip install -r {req_file} --no-deps")
 
         # install the current package
-        c.run(f"pip install -e {HERE}")
+        pkg_dir = op.join(HERE)
+        os.chdir(pkg_dir)
+        c.run(f"pip install -e {pkg_dir}")
+        os.chdir(HERE)
+
 
 _create_task_collection(
     "dev",
@@ -458,11 +472,10 @@ _create_task_collection(
     setup_env_pyspark,
     format_code,
     refresh_version,
-    run_notebook,
     setup_addon,
     setup_info,
     _build_docker_image,
-    setup_ci_env
+    setup_ci_env,
 )
 
 
@@ -483,8 +496,10 @@ def run_unit_tests(c, platform=PLATFORM, env=DEV_ENV, markers=None):
     env_name = _get_env_name(platform, env)
     markers = "" if markers is None else f"-m {markers}"
     with py_env(c, env_name):
-        # FIXME: Add others, flake9-black, etc
-        c.run(f"pytest -v {TESTS_FOLDER} {markers}")
+        for pkg in PACKAGE_LIST:
+            # FIXME: Add others, flake9-black, etc
+            test_pkg = op.join(TESTS_FOLDER, pkg)
+            c.run(f"pytest -v {test_pkg} {markers}")
 
 
 @task(name="vuln")
@@ -565,108 +580,6 @@ _create_task_collection(
 )
 
 
-# -----------
-# Build tasks
-# -----------
-@task(name="docs")
-def build_docs(c, platform=PLATFORM, env=DEV_ENV, regen_api=True, update_credits=False):
-    env_name = _get_env_name(platform, env)
-    with py_env(c, env_name):
-        if regen_api:
-            code_path = op.join(HERE, "docs", "source", "_autosummary")
-            if os.path.exists(code_path):
-                _clean_rmtree(code_path)
-            os.makedirs(code_path, exist_ok=True)
-
-        # FIXME: Add others, flake9-black, etc
-        if update_credits:
-            credits_path = op.join(HERE, "docs", "source", "_credits")
-            if os.path.exists(credits_path):
-                _clean_rmtree(credits_path)
-            os.makedirs(credits_path, exist_ok=True)
-            authors_path = op.join(HERE, "docs")
-            token = os.environ['GITHUB_OAUTH_TOKEN']
-            c.run(
-                f"python {authors_path}/generate_authors_table.py {token} {token}"
-            )
-        c.run("cd docs/source && sphinx-build -T -E -W --keep-going -b html -d ../build/doctrees  . ../build/html")
-
-
-_create_task_collection("build", build_docs)
-
-
-# -----------
-# Launch stuff
-# -----------
-@task(name="jupyterlab")
-def start_jupyterlab(
-    c, platform=PLATFORM, env=DEV_ENV, ip="localhost", port=8080, token="", password=""
-):
-    env_name = _get_env_name(platform, env)
-    # FIXME: run as a daemon and support start/stop using pidfile
-    with py_env(c, env_name):
-        print(f"{'--'*20} \n Running jupyterlab with {env_name} environment \n {'--'*20}")
-        c.run(
-            f"jupyter lab --ip {ip} --port {port} --NotebookApp.token={token} "
-            f"--NotebookApp.password={password} --no-browser"
-        )
-
-@task(name="jupyterlab_pyspark")
-def start_jupyterlab_pyspark(
-    c, platform=PLATFORM, env=DEV_ENV, ip="localhost", port=8081, token="", password=""
-):
-    env_name = _get_env_name_pyspark(platform, env)
-    # FIXME: run as a daemon and support start/stop using pidfile
-    with py_env(c, env_name):
-        print(f"{'--'*20} \n Running jupyterlab with {env_name} environment \n {'--'*20}")  # To: Delete print statement
-        c.run(
-            f"jupyter lab --ip {ip} --port {port} --NotebookApp.token={token} "
-            f"--NotebookApp.password={password} --no-browser"
-        )
-
-
-@task(name="tracker-ui")
-def start_tracker_ui(c, platform=PLATFORM, env=DEV_ENV, port=8082):
-    env_name = _get_env_name(platform, env)
-    # FIXME: run as a daemon and support start/stop using pidfile
-    # NOTE: using sqlite with more than 1 worker will cause issues
-    # if scalability is needed, use a postgresql server
-    with py_env(c, env_name):
-        c.run(
-            f"mlflow server --port {port} --default-artifact-root {HERE}/mlruns "
-            f"--backend-store-uri sqlite:///{HERE}/mlruns/mlflow.db "
-            f"--workers 1"
-        )
-
-
-@task(name="docs")
-def start_docs_server(c, ip="127.0.0.1", port=8081):
-    # FIXME: run as a daemon and support start/stop using pidfile
-    c.run(
-        f"python -m http.server --bind 127.0.0.1 " f"--directory docs/build/html {port}"
-    )
-
-
-@task(name="ipython")
-def start_ipython_shell(c, platform=PLATFORM, env=DEV_ENV):
-    env_name = _get_env_name(platform, env)
-    # FIXME: run as a daemon and support start/stop using pidfile
-    startup_script = op.join(HERE, "deploy", "ipython", "default_startup.py")
-    with py_env(c, env_name):
-        c.run(f"ipython -i {startup_script}")
-
-
-_create_task_collection(
-    "launch",
-    start_jupyterlab,
-    start_jupyterlab_pyspark,
-    start_tracker_ui,
-    start_docs_server,
-    start_ipython_shell,
-)
-
-
-
 # --------------
 # Root namespace
 # --------------
@@ -680,5 +593,3 @@ if OS == "windows":
     config["pty"] = False
 
 ns.configure(config)
-
-

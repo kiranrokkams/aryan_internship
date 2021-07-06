@@ -1,29 +1,40 @@
+from sklearn.pipeline import Pipeline, make_pipeline
+
 from .helpers import *
-from sklearn.pipeline import make_pipeline
-from sklearn.pipeline import Pipeline
+
 
 class BackendMixin:
+    """Backend Mixin class."""
 
     @property
     def backend(self):
-        return self._data.__module__.split('.')[0]
+        """Returns data module for Backend Mixin class."""
+        return self._data.__module__.split(".")[0]
 
     def __getattr__(self, item):
-        if '_data' in dir(self):
+        if "_data" in dir(self):
             if self.backend == BACKENDS.dask:
-                if item == 'iloc':
+                if item == "iloc":
                     return DaskiLocIndexer(self)
-                elif item == 'T':
+                elif item == "T":
                     return convert_to_tiger_assets(self._data.compute().T)
-            if self.backend == BACKENDS.dask and not hasattr(self._data, item) and hasattr(pd.DataFrame, item):
+            if (
+                self.backend == BACKENDS.dask
+                and not hasattr(self._data, item)
+                and hasattr(pd.DataFrame, item)
+            ):
                 attr = getattr(pd.DataFrame, item)
                 if callable(attr):
                     attr = tigerify(attr)
-                print('Using map_partitions to execute {}'.format(item))
+                print("Using map_partitions to execute {}".format(item))
                 return daskify_pandas(self, attr)
             else:
                 attr = getattr(self._data, item)
-                if callable(attr) and getattr(self._data.__class__, item).__class__.__name__ != 'property':
+                if (
+                    callable(attr)
+                    and getattr(self._data.__class__, item).__class__.__name__
+                    != "property"
+                ):
                     attr = tigerify(attr)
                 else:
                     attr = convert_to_tiger_assets(attr)
@@ -47,7 +58,7 @@ class BackendMixin:
         try:
             result = self._data.__getitem__(*args)
         except Exception as e:
-            raise Exception('getitem failed for args - {}. Error - {}'.format(args, e))
+            raise Exception("getitem failed for args - {}. Error - {}".format(args, e))
         return convert_to_tiger_assets(result)
 
     def __len__(self):
@@ -57,22 +68,29 @@ class BackendMixin:
         return self._data.__str__()
 
     def compute(self):
+        """Computes for Backend Mixin class."""
         from tigerml.core.utils import compute_if_dask
+
         return convert_to_tiger_assets(compute_if_dask(self._data))
 
     def persist(self):
+        """Persists for Backend Mixin class."""
         from tigerml.core.utils import persist_if_dask
+
         return convert_to_tiger_assets(persist_if_dask(self._data))
 
     @property
     def shape(self):
+        """Returns shape of dataframe for Backend Mixin class."""
         if self.backend == BACKENDS.dask:
             import dask
+
             return dask.compute(self._data.shape)[0]
         return self._data.shape
 
     @property
     def empty(self):
+        """Checks if dataframe is empty for Backend Mixin class."""
         if self.backend == BACKENDS.dask:
             return len(self._data.index) == 0 or len(self._data.columns) == 0
         return self._data.empty
@@ -169,6 +187,7 @@ class BackendMixin:
 
 
 class DaskiLocIndexer:
+    """Daski Loc Indexer."""
 
     def __init__(self, data):
         self._data = data._data
@@ -193,19 +212,24 @@ class DaskiLocIndexer:
             max_row = max(max_row, rows)
         else:
             raise NotImplementedError
-        result = self._data.head(max_row+1).iloc[item]
+        result = self._data.head(max_row + 1).iloc[item]
         result = convert_to_tiger_assets(result)
         return result
 
 
 class TAPipeline(Pipeline):
+    """Ta pipeline class."""
 
     def __init__(self, pipeline=None, **kwargs):
         if pipeline:
-            for att in [a for a in dir(pipeline) if not a.startswith('__') and a not in ['predict']]:
+            for att in [
+                a
+                for a in dir(pipeline)
+                if not a.startswith("__") and a not in ["predict"]
+            ]:
                 try:
                     setattr(self, att, getattr(pipeline, att))
-                except:
+                except Exception:
                     pass
         else:
             self.__init__(Pipeline(**kwargs))
@@ -213,111 +237,160 @@ class TAPipeline(Pipeline):
 
     @classmethod
     def from_parent(cls, pipeline):
+        """Identifies from parent for Ta pipeline class."""
         steps = pipeline.steps
         new_obj = cls(steps=steps)
-        for att in [a for a in dir(pipeline) if not a.startswith('__') and a not in ['predict']]:
+        for att in [
+            a for a in dir(pipeline) if not a.startswith("__") and a not in ["predict"]
+        ]:
             try:
                 setattr(new_obj, att, getattr(pipeline, att))
-            except:
+            except Exception:
                 pass
         return new_obj
 
     def predict(self, X, **predict_params):
+        """Predicts using model."""
         # import pdb
         # pdb.set_trace()
         y = super().predict(X, **predict_params)
         return y.ravel()
 
-    # def score(self, X, y=None, sample_weight=None):
-    #   # import pdb
-    #   # pdb.set_trace()
-    #   score = super().score(X, y, sample_weight)
-    #   self.score_ = score
-    #   return score
-
     def get_step(self, step_index, only_object=True, only_name=False):
+        """Gets step."""
         step = self.steps[step_index]
         if only_object:
             return step[1]
         if only_name:
             return step[0]
         else:
-            return {'name': step[0], 'object': step[1]}
+            return {"name": step[0], "object": step[1]}
 
     def get_steps_before_step(self, step_index):
+        """Gets step before step."""
         preproc_steps = self.steps[:step_index]
         return preproc_steps
 
     def get_data_at_step(self, step_index, X):
+        """Gets data at step."""
         preproc_steps = self.get_steps_before_step(step_index)
         if len(preproc_steps) > 0:
             for proc_name, proc in preproc_steps:
                 new_x_train = pd.DataFrame(proc.transform(X))
-                if not proc_name:       # don't change names if proc_name is empty
+                if not proc_name:  # don't change names if proc_name is empty
                     X = new_x_train
                     continue
                 if len(new_x_train.columns) == len(X.columns):
-                    X = new_x_train.rename(columns=dict(zip(list(new_x_train.columns),
-                                                            ['{}({})'.format(proc_name, x) for x in X.columns])))
-                elif hasattr(proc, 'get_feature_names'):
-                    if proc.__class__.__name__ == 'FeatureUnion':
+                    X = new_x_train.rename(
+                        columns=dict(
+                            zip(
+                                list(new_x_train.columns),
+                                ["{}({})".format(proc_name, x) for x in X.columns],
+                            )
+                        )
+                    )
+                elif hasattr(proc, "get_feature_names"):
+                    if proc.__class__.__name__ == "FeatureUnion":
                         X = new_x_train
                     else:
-                        X = new_x_train.rename(columns=dict(zip(list(new_x_train.columns), ['{}({})'.format(
-                            proc.__class__.__name__, x) for x in proc.get_feature_names(list(X.columns))])))
-                elif hasattr(proc, 'get_support'):
+                        X = new_x_train.rename(
+                            columns=dict(
+                                zip(
+                                    list(new_x_train.columns),
+                                    [
+                                        "{}({})".format(proc.__class__.__name__, x)
+                                        for x in proc.get_feature_names(list(X.columns))
+                                    ],
+                                )
+                            )
+                        )
+                elif hasattr(proc, "get_support"):
                     new_features = list(X.columns[proc.get_support()])
-                    X = new_x_train.rename(columns=dict(zip(new_x_train.columns, new_features)))
-                elif str(proc.__module__).startswith('tpot'):
-                    if proc.__module__.startswith('tpot.builtins') and proc.__class__.__name__ == 'ZeroCount':
-                        X = new_x_train.rename(columns=dict(zip(list(new_x_train.columns),
-                                                                ['count_of_0', 'count_of_non_0'] + list(X.columns))))
-                    elif proc.__module__.startswith('tpot.builtins') and proc.__class__.__name__ == 'StackingEstimator':
+                    X = new_x_train.rename(
+                        columns=dict(zip(new_x_train.columns, new_features))
+                    )
+                elif str(proc.__module__).startswith("tpot"):
+                    if (
+                        proc.__module__.startswith("tpot.builtins")
+                        and proc.__class__.__name__ == "ZeroCount"
+                    ):
+                        X = new_x_train.rename(
+                            columns=dict(
+                                zip(
+                                    list(new_x_train.columns),
+                                    ["count_of_0", "count_of_non_0"] + list(X.columns),
+                                )
+                            )
+                        )
+                    elif (
+                        proc.__module__.startswith("tpot.builtins")
+                        and proc.__class__.__name__ == "StackingEstimator"
+                    ):
                         estimator_class = proc.estimator.__class__.__name__
-                        if hasattr(proc.estimator, 'predict_proba'):
-                            number_of_classes = len(list(new_x_train.columns)) - len(list(X.columns)) - 1
-                            X = new_x_train.rename(columns=dict(zip(list(new_x_train.columns), list(X.columns) + [
-                                '{}_prediction'.format(estimator_class)] +
-                                                                    ['{}_prob_for_{}'.format(estimator_class, cl) for cl
-                                                                     in range(0, number_of_classes)])))
+                        if hasattr(proc.estimator, "predict_proba"):
+                            number_of_classes = (
+                                len(list(new_x_train.columns))
+                                - len(list(X.columns))
+                                - 1
+                            )
+                            X = new_x_train.rename(
+                                columns=dict(
+                                    zip(
+                                        list(new_x_train.columns),
+                                        list(X.columns)
+                                        + ["{}_prediction".format(estimator_class)]
+                                        + [
+                                            "{}_prob_for_{}".format(estimator_class, cl)
+                                            for cl in range(0, number_of_classes)
+                                        ],
+                                    )
+                                )
+                            )
                         else:
-                            X = new_x_train.rename(columns=dict(zip(list(new_x_train.columns),
-                                                                    list(X.columns) + [
-                                                                        '{}_prediction'.format(estimator_class)])))
+                            X = new_x_train.rename(
+                                columns=dict(
+                                    zip(
+                                        list(new_x_train.columns),
+                                        list(X.columns)
+                                        + ["{}_prediction".format(estimator_class)],
+                                    )
+                                )
+                            )
                 else:
-                    # import pdb
-                    # pdb.set_trace()
                     X = new_x_train
-                    print('WARNING: The shape of input features is changed. '
-                              'Interpretability will be lost. Process is {}'.format(proc.__class__))
-                # except:
-                    # import pdb
-                    # pdb.set_trace()
+                    print(
+                        "WARNING: The shape of input features is changed. "
+                        "Interpretability will be lost. Process is {}".format(
+                            proc.__class__
+                        )
+                    )
         return X
 
     @property
     def feature_importances_(self):
-        # import pdb
-        # pdb.set_trace()
+        """Gets Feature importances."""
         estimator = self.get_step(-1)
-        if hasattr(estimator, 'estimator'):
+        if hasattr(estimator, "estimator"):
             estimator = estimator.estimator
-        if hasattr(estimator, 'coef_'):
+        if hasattr(estimator, "coef_"):
             coefs = estimator.coef_
         else:
-            coefs = getattr(estimator, 'feature_importances_', None)
+            coefs = getattr(estimator, "feature_importances_", None)
         if coefs is None:
-            raise RuntimeError('The estimator does not expose '
-                               '"coef_" or "feature_importances_" '
-                               'attributes')
+            raise RuntimeError(
+                "The estimator does not expose "
+                '"coef_" or "feature_importances_" '
+                "attributes"
+            )
         return coefs
 
     @classmethod
     def from_string(cls, pipeline_string, x_train=None, y_train=None):
+        """Makes the pipeline using pipeline string and fits model."""
         try:
             pipeline = make_pipeline(eval(pipeline_string))
         except Exception as e:
-            raise Exception('Cannot create the pipeline. Error - {}'.format(e))
+            raise Exception("Cannot create the pipeline. Error - {}".format(e))
         ta_pipeline = cls(pipeline)
         if x_train is not None and y_train is not None:
             ta_pipeline.fit(x_train, y_train)

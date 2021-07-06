@@ -1,4 +1,10 @@
-from .contents import ExcelTable, ExcelChart, ExcelImage, ExcelText, ExcelComponentGroup, ExcelComponent
-from .Report import ExcelReport
+from .contents import (
+    ExcelChart,
+    ExcelComponent,
+    ExcelComponentGroup,
+    ExcelImage,
+    ExcelTable,
+    ExcelText,
+)
 from .lib import create_excel_report
-
+from .Report import ExcelReport

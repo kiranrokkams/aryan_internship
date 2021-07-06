@@ -1,52 +1,53 @@
 """Description: Model Interpretation Module."""
 
-import matplotlib.pyplot as plt
 import logging
-import numpy as np
 import os
+from copy import deepcopy
+
+import holoviews as hv
+import hvplot.pandas
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
-# import seaborn as sns
 import shap
+from hvplot import hvPlot
 from matplotlib import rcParams
 from sklearn.pipeline import Pipeline
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 import tigerml.core.dataframe as td
+from tigerml.core.common import ModelFeatureImportance
 from tigerml.core.dataframe.base import TAPipeline
 from tigerml.core.dataframe.helpers import detigerify
-from tigerml.core.utils import DictObject, fail_gracefully, measure_time
-from tigerml.core.common import ModelFeatureImportance
-from tigerml.core.utils.pandas import (
-    get_bool_cols,
-    get_cat_cols,
-    get_num_cols,
-)
-import hvplot.pandas
-import holoviews as hv
-from hvplot import hvPlot
-from copy import deepcopy
-from tigerml.core.utils.modeling import Algo
 from tigerml.core.reports import format_tables_in_report
+from tigerml.core.utils import DictObject, fail_gracefully, measure_time
+from tigerml.core.utils.modeling import Algo
+from tigerml.core.utils.pandas import get_bool_cols, get_cat_cols, get_num_cols
 
 hv.extension("bokeh", "matplotlib")
-hv.output(widget_location='bottom')
+hv.output(widget_location="bottom")
 rcParams.update({"figure.autolayout": True})
 
 _LOGGER = logging.getLogger(__name__)
 
-MODEL_TYPES = DictObject({
-    "tree": "tree",
-    "linear": "linear",
-    "kernel": "kernel",
-    "neuralnetwork": "neuralnetwork",
-})
+MODEL_TYPES = DictObject(
+    {
+        "tree": "tree",
+        "linear": "linear",
+        "kernel": "kernel",
+        "neuralnetwork": "neuralnetwork",
+    }
+)
 
-SHAP_EXPLAINERS = DictObject({
-    "tree": shap.TreeExplainer,
-    "linear": shap.LinearExplainer,
-    "kernel": shap.KernelExplainer,
-    "neuralnetwork": shap.DeepExplainer,
-})
+SHAP_EXPLAINERS = DictObject(
+    {
+        "tree": shap.TreeExplainer,
+        "linear": shap.LinearExplainer,
+        "kernel": shap.KernelExplainer,
+        "neuralnetwork": shap.DeepExplainer,
+    }
+)
+
 
 def set_x_type(obj, cols=None):
     if isinstance(obj, np.ndarray):
@@ -54,6 +55,7 @@ def set_x_type(obj, cols=None):
             cols = ["Feature_" + str(i) for i in range(obj.shape[1])]
         obj = pd.DataFrame(obj, columns=cols)
     return obj
+
 
 def dict_key_hier(t, s=[]):
     for key in t:
@@ -98,7 +100,9 @@ def _format_error_bucket_label(error_edges):
     return error_labels
 
 
-def regression_error_bucket(residual, y, error_edges, error_labels=None, threshold_type="perc"):
+def regression_error_bucket(
+    residual, y, error_edges, error_labels=None, threshold_type="perc"
+):
     """Residual error buckets for regression models.
 
     Parameters
@@ -124,7 +128,9 @@ def regression_error_bucket(residual, y, error_edges, error_labels=None, thresho
     error_edges = [-np.inf] + error_edges + [np.inf]
     if error_labels is not None:
         if len(error_labels) + 1 != len(error_edges):
-            raise ValueError("Error edges must be one fewer than the number of error labels")
+            raise ValueError(
+                "Error edges must be one fewer than the number of error labels"
+            )
     else:
         error_labels = _format_error_bucket_label(error_edges)
 
@@ -154,13 +160,17 @@ def classification_error_bucket(y, yhat, cutoff_value=0.5):
         pd.Series with error bucket labels
     """
     yhat_bin = (yhat > cutoff_value).astype(int)
-    error_bucket = pd.Series(np.where(y == yhat_bin, "T", "F")).str.cat(pd.Series(np.where(yhat_bin == 1, "P", "N")))
+    error_bucket = pd.Series(np.where(y == yhat_bin, "T", "F")).str.cat(
+        pd.Series(np.where(yhat_bin == 1, "P", "N"))
+    )
     return error_bucket
 
 
 def get_multiclass_residual_plot(x, y_true, yhat, features=None, display_labels=None):
     if display_labels is None:
-        display_labels = display_labels = dict(zip(set(y_true),[str(i) for i in set(y_true)]))
+        display_labels = display_labels = dict(
+            zip(set(y_true), [str(i) for i in set(y_true)])
+        )
     if features is None:
         features = list(x.columns)
     y_pred = pd.Series(yhat.argmax(axis=1)).map(display_labels).values
@@ -172,14 +182,16 @@ def get_multiclass_residual_plot(x, y_true, yhat, features=None, display_labels=
     for class_ in x_["Actual"].unique():
         residual_plots_class = {}
         for feature in features:
-            residual_plots_class[feature] = x_.loc[x_["Actual"]==class_].hvplot.density(y=feature, by=["Actual-Predicted"])
+            residual_plots_class[feature] = x_.loc[
+                x_["Actual"] == class_
+            ].hvplot.density(y=feature, by=["Actual-Predicted"])
         residual_plots[class_] = residual_plots_class
     return residual_plots
 
 
 def sample_data(X, n=100):
     nrows = X.shape[0]
-    X = X.sample(min([nrows,n]), random_state=42)
+    X = X.sample(min([nrows, n]), random_state=42)
     return X
 
 
@@ -250,7 +262,10 @@ def get_model_type(model):
             or "forest" in model_module
             or "trees" in model_module
             or ("boost" in model_module and "adaboost" not in model_module)
-            or ("ensemble" in model_module and ("boost" in model_name or "forest" in model_name))
+            or (
+                "ensemble" in model_module
+                and ("boost" in model_name or "forest" in model_name)
+            )
         ):
             return MODEL_TYPES.tree
         elif ".kernel." in model_module or ".svm." in model_module:
@@ -287,7 +302,9 @@ def _get_shap_explainer(model, X, model_type=None):
     if model_type == MODEL_TYPES.kernel:
         model = deepcopy(model.predict)
     else:
-        model = deepcopy(model)  # deepcopy is required to avoid overwriting model object
+        model = deepcopy(
+            model
+        )  # deepcopy is required to avoid overwriting model object
     if "XGB" in model_str:
         mybooster = model.get_booster()
         model_bytearray = mybooster.save_raw()[4:]
@@ -298,44 +315,54 @@ def _get_shap_explainer(model, X, model_type=None):
         mybooster.save_raw = myfun
         model = mybooster
         shap_explainer = SHAP_EXPLAINERS[model_type](model)
-        _LOGGER.info("\nData is not passed to ShapExplainer since it is an XGBoost model object.\n")
+        _LOGGER.info(
+            "\nData is not passed to ShapExplainer since it is an XGBoost model object.\n"
+        )
     else:
         shap_explainer = SHAP_EXPLAINERS[model_type](model, sample_data(X, 100))
     return shap_explainer
 
 
-def get_shap_summary_plot(model, X, model_type=None, native_plot=True,
-                          feature_names=None, class_names=None):
+def get_shap_summary_plot(
+    model, X, model_type=None, native_plot=True, feature_names=None, class_names=None
+):
     shap_explainer = _get_shap_explainer(model, X, model_type)
     try:
         shap_values = shap_explainer.shap_values(X)
     except shap.common.SHAPError:
-        shap_values = shap_explainer.shap_values(X, approximate=True, check_additivity=False)
+        shap_values = shap_explainer.shap_values(
+            X, approximate=True, check_additivity=False
+        )
 
     if not feature_names and isinstance(X, pd.DataFrame):
         feature_names = X.columns.tolist()
     if class_names is None:
-        class_names = ['Class {}'.format(i) for i in range(len(shap_values))]
+        class_names = ["Class {}".format(i) for i in range(len(shap_values))]
 
     if native_plot:
-        shap_summary_plot = shap.summary_plot(shap_values, X, plot_type="bar",
-                                              feature_names=feature_names,
-                                              class_names=class_names)
+        shap_summary_plot = shap.summary_plot(
+            shap_values,
+            X,
+            plot_type="bar",
+            feature_names=feature_names,
+            class_names=class_names,
+        )
     else:
         shap_values_matrix = np.array(shap_values)
         mean_abs_shap_values = np.mean(np.abs(shap_values_matrix), axis=1)
-        plot_df = pd.DataFrame(mean_abs_shap_values, index=class_names, columns=feature_names)
+        plot_df = pd.DataFrame(
+            mean_abs_shap_values, index=class_names, columns=feature_names
+        )
         plot_df = plot_df.T
         plot_df["_row_sum"] = plot_df.sum(axis=1)
         plot_df.sort_values("_row_sum", inplace=True)
         plot_df.drop("_row_sum", axis=1, inplace=True)
-        plot_df.index.name = 'Features'
-        plot_df.columns.name = 'Class'
-        n_features = plot_df.shape[0]
+        plot_df.index.name = "Features"
+        plot_df.columns.name = "Class"
         shap_summary_plot = hvPlot(plot_df).barh(
             stacked=True,
-            title='Average impact on model output magnitude',
-            value_label='mean(|SHAP value|)'
+            title="Average impact on model output magnitude",
+            value_label="mean(|SHAP value|)",
         )
     return shap_summary_plot
 
@@ -344,6 +371,8 @@ algo_object = Algo()
 
 
 class ModelInterpretation:
+    """Model interpretation class declaration."""
+
     def __init__(
         self,
         model=None,
@@ -403,7 +432,9 @@ class ModelInterpretation:
             self.interpretations.pop("coeff_table", None)
             self.interpretations.pop("feature_importance", None)
             self.interpretations = _clear_shap(self.interpretations)
-            self.interpretations = delete_keys_from_dict(self.interpretations, ["error_analysis"])
+            self.interpretations = delete_keys_from_dict(
+                self.interpretations, ["error_analysis"]
+            )
         else:
             self.report_option = 1
             # Extract model from pipeline
@@ -417,10 +448,10 @@ class ModelInterpretation:
                 model_type = get_model_type(model)
             self.model_type = model_type
             self.model = model
-            if not(hasattr(self.model, "predict")):
+            if not (hasattr(self.model, "predict")):
                 self.report_option = 2
-                self.interpretations.pop('coeff_table', None)
-                self.interpretations.pop('feature_importance', None)
+                self.interpretations.pop("coeff_table", None)
+                self.interpretations.pop("feature_importance", None)
                 self.interpretations = _clear_shap(self.interpretations)
             else:
                 # Algo Reference
@@ -428,7 +459,9 @@ class ModelInterpretation:
                     self.algo = algo_object.classification
 
                 if hasattr(self.model, "predict_proba"):
-                    self.interpretations = delete_keys_from_dict(self.interpretations, ["errorbucket_drivers"])
+                    self.interpretations = delete_keys_from_dict(
+                        self.interpretations, ["errorbucket_drivers"]
+                    )
 
                 if not (hasattr(self.model, "summary") or hasattr(self.model, "coef_")):
                     self.interpretations.pop("coeff_table", None)
@@ -441,9 +474,13 @@ class ModelInterpretation:
                 if self.pipeline:
                     # in case if ModelInterpretation used independently and Pipeline is passed for model
                     # TODO test if data is copied:
-                    self.x_train = set_x_type(self.pipeline.get_data_at_step(-1, self.x_train))
+                    self.x_train = set_x_type(
+                        self.pipeline.get_data_at_step(-1, self.x_train)
+                    )
                     if self.has_test:
-                        self.x_test = set_x_type(self.pipeline.get_data_at_step(-1, self.x_test))
+                        self.x_test = set_x_type(
+                            self.pipeline.get_data_at_step(-1, self.x_test)
+                        )
 
         if self.y_test is None:
             self.has_test = False
@@ -456,44 +493,53 @@ class ModelInterpretation:
             "coeff_table": {},
             "error_analysis": {
                 "residual_analysis": {
-                    "errorbucket_profiles": {}, 
+                    "errorbucket_profiles": {},
                     # "errorbucket_drivers": {},
                 },
-                "from_shap": {"errorbucket": {},},
+                "from_shap": {"errorbucket": {}},
             },
             "feature_importance": {
-                "from_model": {}, 
-                "from_shap": {"shap_value_distribution": {},},
+                "from_model": {},
+                "from_shap": {"shap_value_distribution": {}},
             },
             "shap_interpretation": {
                 "shap_values": {},
                 "dependence_plots_interpretation": {},
-                "dependence_plots": {}
+                "dependence_plots": {},
             },
         }
         return interpretation_dict
 
     def set_errorbuckets_spec(self, errorbuckets_spec=None):
+        """Sets error buckets spec for Model interpretation class."""
+
         if self.x_train is not None:
             if algo_object.is_regression(self.algo):
                 if errorbuckets_spec is not None:
-                    if str(errorbuckets_spec["type"]) != "abs" and str(errorbuckets_spec["type"]) != "perc":
+                    if (
+                        str(errorbuckets_spec["type"]) != "abs"
+                        and str(errorbuckets_spec["type"]) != "perc"
+                    ):
                         raise ValueError(
                             "Error thresholds type should be one of 'ABS' (for absolute value) or 'PERC' (for "
                             "percentage value)"
                         )
                     if sorted(errorbuckets_spec["edges"]) != errorbuckets_spec["edges"]:
-                        raise ValueError("Error thresholds edges should be in ascending order.")
+                        raise ValueError(
+                            "Error thresholds edges should be in ascending order."
+                        )
                     if len(errorbuckets_spec["edges"]) < 2:
                         raise ValueError(
                             "Error thresholds edges should have at least 2 edges, one each for defining "
                             "under-prediction and over-prediction."
                         )
-                    if ("labels" not in errorbuckets_spec.keys()) or len(errorbuckets_spec["edges"]) + 1 != len(
-                        errorbuckets_spec["labels"]
-                    ):
+                    if ("labels" not in errorbuckets_spec.keys()) or len(
+                        errorbuckets_spec["edges"]
+                    ) + 1 != len(errorbuckets_spec["labels"]):
                         # Plot labels
-                        errorbuckets_spec["labels"] = None  # create_labels(errorbuckets_spec["edges"])
+                        errorbuckets_spec[
+                            "labels"
+                        ] = None  # create_labels(errorbuckets_spec["edges"])
                 else:
                     errorbuckets_spec = {
                         "type": "perc",
@@ -508,7 +554,10 @@ class ModelInterpretation:
             else:
                 if errorbuckets_spec is not None:
                     if "cutoff" in errorbuckets_spec.keys():
-                        if not (errorbuckets_spec["cutoff"] >= 0 and errorbuckets_spec["cutoff"] <= 1):
+                        if not (
+                            errorbuckets_spec["cutoff"] >= 0
+                            and errorbuckets_spec["cutoff"] <= 1
+                        ):
                             raise ValueError("Cutoff should be between 0 and 1")
                     else:
                         errorbuckets_spec["cutoff"] = 0.5
@@ -544,21 +593,39 @@ class ModelInterpretation:
                     )
             if algo_object.is_classification(self.algo):
                 self.errorbucket_train = classification_error_bucket(
-                    self.y_train, self.yhat_train, cutoff_value=self.errorbuckets_spec["cutoff"]
+                    self.y_train,
+                    self.yhat_train,
+                    cutoff_value=self.errorbuckets_spec["cutoff"],
                 )
                 if self.has_test and self.x_test is not None:
                     self.errorbucket_test = classification_error_bucket(
-                        self.y_test, self.yhat_test, cutoff_value=self.errorbuckets_spec["cutoff"]
+                        self.y_test,
+                        self.yhat_test,
+                        cutoff_value=self.errorbuckets_spec["cutoff"],
                     )
-            self.errorbucket_train=self.errorbucket_train.tolist()
-            self.errorbucket_train = pd.Series(self.errorbucket_train, index= self.x_train.index)
+            self.errorbucket_train = self.errorbucket_train.tolist()
+            self.errorbucket_train = pd.Series(
+                self.errorbucket_train, index=self.x_train.index
+            )
             self.error_buckets = list(self.errorbucket_train.unique())
             if self.errorbucket_test is not None:
-                self.errorbucket_test=self.errorbucket_test.tolist()
-                self.errorbucket_test = pd.Series(self.errorbucket_test, index= self.x_test.index)
-                self.error_buckets = list(np.unique(self.error_buckets + list(self.errorbucket_test.unique())))
-            self.error_buckets = [error_bucket for error_bucket in self.error_buckets if not pd.isnull(error_bucket)]
-            self.error_buckets = [error_bucket for error_bucket in self.error_buckets if error_bucket != 'nan']
+                self.errorbucket_test = self.errorbucket_test.tolist()
+                self.errorbucket_test = pd.Series(
+                    self.errorbucket_test, index=self.x_test.index
+                )
+                self.error_buckets = list(
+                    np.unique(self.error_buckets + list(self.errorbucket_test.unique()))
+                )
+            self.error_buckets = [
+                error_bucket
+                for error_bucket in self.error_buckets
+                if not pd.isnull(error_bucket)
+            ]
+            self.error_buckets = [
+                error_bucket
+                for error_bucket in self.error_buckets
+                if error_bucket != "nan"
+            ]
 
     def _set_erroranalysis_cols(self):
         if "cols" in self.errorbuckets_spec.keys():
@@ -569,14 +636,20 @@ class ModelInterpretation:
             if self.feature_importance is None:
                 try:
                     df_feat = self.get_feature_importances(self.x_train, plot=False)
-                    self.erroranalysis_cols = list(df_feat.abs().sort_values("importance", ascending=False).index)[:N]
-                except Exception as e:
+                    self.erroranalysis_cols = list(
+                        df_feat.abs().sort_values("importance", ascending=False).index
+                    )[:N]
+                except Exception:
                     self.erroranalysis_cols = list(self.x_train.columns)[:N]
             else:
                 self.erroranalysis_cols = list(
-                    self.feature_importance.abs().sort_values("importance", ascending=False).index
+                    self.feature_importance.abs()
+                    .sort_values("importance", ascending=False)
+                    .index
                 )[:N]
-        self.erroranalysis_cols = list(set(self.erroranalysis_cols).intersection(self.x_train.columns))
+        self.erroranalysis_cols = list(
+            set(self.erroranalysis_cols).intersection(self.x_train.columns)
+        )
 
     def _set_erroranalysis_cols_shap(self, shap_values):
         if "cols" in self.errorbuckets_spec.keys():
@@ -585,16 +658,19 @@ class ModelInterpretation:
         else:
             N = min(self.x_train.shape[1], self.errorbuckets_spec["top_n_cols"])
             try:
-                df_feat = pd.DataFrame({
-                    'importance': abs(shap_values).mean(axis=0),
-                    'features' : list(self.x_train.columns)
-                }).sort_values("importance", ascending=False)
+                df_feat = pd.DataFrame(
+                    {
+                        "importance": abs(shap_values).mean(axis=0),
+                        "features": list(self.x_train.columns),
+                    }
+                ).sort_values("importance", ascending=False)
                 erroranalysis_cols_shap = list(df_feat.features)[:N]
-            except Exception as e:
+            except Exception:
                 erroranalysis_cols_shap = self.erroranalysis_cols
         return erroranalysis_cols_shap
 
     def get_coefs_table(self, vif=False):
+        """Gets coefficients table."""
         if hasattr(self.model, "summary"):
             results_summary = self.model.summary()
             results_as_html = results_summary.tables[1].as_html()
@@ -606,14 +682,16 @@ class ModelInterpretation:
                 coeffs_table = pd.DataFrame(
                     {
                         "variables": self.x_train.columns.tolist(),
-                        "coefficients": self.model.coef_  # TODO, Raj verify this change.
+                        "coefficients": self.model.coef_,  # TODO, Raj verify this change.
                     }
                 )
             else:
                 coeffs_table = pd.DataFrame(self.model.coef_)
                 coeffs_table.columns = self.x_train.columns.tolist()
-                coeffs_table['class'] = self.display_labels
-                coeffs_table = coeffs_table.melt(id_vars='class',value_name='coefficients')
+                coeffs_table["class"] = self.display_labels
+                coeffs_table = coeffs_table.melt(
+                    id_vars="class", value_name="coefficients"
+                )
                 vif = False
         else:
             coeffs_table = None
@@ -622,18 +700,21 @@ class ModelInterpretation:
             if vif:
                 vif = calc_vif(self.x_train)
                 coeffs_table = coeffs_table.merge(vif, how="left", on=["variables"])
-            if not('class' in coeffs_table.columns):
+            if not ("class" in coeffs_table.columns):
                 coeffs_table.set_index("variables", inplace=True)
                 coeffs_table.index.name = None
                 coeffs_table.columns.name = None
                 coeffs_table.rename(columns={"coef": "coefficients"}, inplace=True)
             else:
-                if all(coeffs_table['class'].isnull()):
-                    coeffs_table = coeffs_table.drop(columns=['class'])
+                if all(coeffs_table["class"].isnull()):
+                    coeffs_table = coeffs_table.drop(columns=["class"])
         return coeffs_table
 
-    def _residual_analysis_by_feature(self, X, col_idv, categorical=True, train="train"):
+    def _residual_analysis_by_feature(
+        self, X, col_idv, categorical=True, train="train"
+    ):
         """Generate distributions plots for elements by flag variable.
+
         Input: col_idv : Independent variable for which plot is to be generated.
                categorical : Independent variable type. (True - categorical, False - Continuous)
         Output: The function generates confusion matrix components as
@@ -643,7 +724,9 @@ class ModelInterpretation:
         # yet to test
         dataset = X.copy()
         if categorical:
-            df_confusion = dataset.groupby([col_idv, "errorbucket_label"]).size().reset_index()
+            df_confusion = (
+                dataset.groupby([col_idv, "errorbucket_label"]).size().reset_index()
+            )
             df_confusion.columns = [col_idv, "errorbucket_label"] + ["values"]
             df_confusion[col_idv] = df_confusion[col_idv].str.wrap(50)
             df_confusion["values"].fillna(0, inplace=True)
@@ -651,7 +734,9 @@ class ModelInterpretation:
                 x="errorbucket_label",
                 y=col_idv,
                 C="values",
-                title="Index heatmap of " + col_idv + " over Confusion Matrix components",
+                title="Index heatmap of "
+                + col_idv
+                + " over Confusion Matrix components",
                 width=450,
                 height=400,
             )
@@ -678,10 +763,22 @@ class ModelInterpretation:
             )
 
     def _get_multiclass_residual_plots(self, features=None):
-        #features = list(self.x_train.columns)[:10]
-        train_plot = get_multiclass_residual_plot(self.x_train, self.y_train, self.yhat_train, features, display_labels=self.display_labels)
+        # features = list(self.x_train.columns)[:10]
+        train_plot = get_multiclass_residual_plot(
+            self.x_train,
+            self.y_train,
+            self.yhat_train,
+            features,
+            display_labels=self.display_labels,
+        )
         if self.has_test:
-            test_plot = get_multiclass_residual_plot(self.x_test, self.y_test, self.yhat_test, features, display_labels=self.display_labels)
+            test_plot = get_multiclass_residual_plot(
+                self.x_test,
+                self.y_test,
+                self.yhat_test,
+                features,
+                display_labels=self.display_labels,
+            )
             cm_dict = {}
             cm_dict["Train Data"] = train_plot
             cm_dict["Test Data"] = test_plot
@@ -700,6 +797,7 @@ class ModelInterpretation:
 
     # @fail_gracefully(_LOGGER)
     def shap_distribution(self, X=None, shap_values=None):
+        """Gets the shap distributions."""
         # if X is None or shap_values is None:  # for user api
         #     X, shap_values = self._get_X_and_shap_values(self.x_train)
         if len(X) == 0:
@@ -715,6 +813,7 @@ class ModelInterpretation:
 
     # @fail_gracefully(_LOGGER)
     def shap_feature_contributions(self, X=None, shap_values=None):
+        """Gets the shap distributions."""
         # if X is None or shap_values is None:  # for user api
         #     X, shap_values = self._get_X_and_shap_values(self.x_train)
         plt.close("all")
@@ -727,6 +826,7 @@ class ModelInterpretation:
 
     # @fail_gracefully(_LOGGER)
     def get_errorbucket_profiles(self):
+        """Gets the error bucket distributions."""
         # if self.errorbucket_train is None:
         #     self.set_errorbuckets_spec()
         x_cols = self.erroranalysis_cols
@@ -743,9 +843,15 @@ class ModelInterpretation:
         else:
             df_bool = None
         X["errorbucket_label"] = self.errorbucket_train
-        if (X["errorbucket_label"].isnull().sum() > 0):
-            _LOGGER.warning("Residual Analysis: Ignoring {} observations in train data for error analysis where y=0".format(X["errorbucket_label"].isnull().sum()))
-            X = X.loc[X["errorbucket_label"].isnull()==False,]
+        if X["errorbucket_label"].isnull().sum() > 0:
+            _LOGGER.warning(
+                "Residual Analysis: Ignoring {} observations in train data for error analysis where y=0".format(
+                    X["errorbucket_label"].isnull().sum()
+                )
+            )
+            X = X.loc[
+                X["errorbucket_label"].isnull() == False,  # noqa: E712
+            ]
         if self.has_test:
             X_test = self.x_test.copy()
             X_test = X_test[x_cols]
@@ -754,22 +860,34 @@ class ModelInterpretation:
                 df_test = X_test[bool_cols].reset_index()
                 df_test = df_test.set_index("index")
                 df_test_bool = df_test[df_test == 1].stack().reset_index().drop(0, 1)
-            if (X_test["errorbucket_label"].isnull().sum() > 0):
-                _LOGGER.warning("Residual Analysis: Ignoring {} observations in test data for error analysis where y=0".format(X_test["errorbucket_label"].isnull().sum()))
-                X_test = X_test.loc[X_test["errorbucket_label"].isnull()==False,]
+            if X_test["errorbucket_label"].isnull().sum() > 0:
+                _LOGGER.warning(
+                    "Residual Analysis: Ignoring {} observations in test data for error analysis where y=0".format(
+                        X_test["errorbucket_label"].isnull().sum()
+                    )
+                )
+                X_test = X_test.loc[
+                    X_test["errorbucket_label"].isnull() == False,  # noqa: E712
+                ]
 
         plots_dict = {}
         for i in num_cols:
             train_plot = self._residual_analysis_by_feature(X, i, False)
             if self.has_test:
-                train_plot = (train_plot + self._residual_analysis_by_feature(X_test, i, False, "test")).cols(2)
+                train_plot = (
+                    train_plot
+                    + self._residual_analysis_by_feature(X_test, i, False, "test")
+                ).cols(2)
                 plots_dict[i] = [train_plot]
             else:
                 plots_dict[i] = train_plot
         for i in cat_cols:
             train_plot = self._residual_analysis_by_feature(X, i, True)
             if self.has_test and self.x_test is not None:
-                train_plot = (train_plot + self._residual_analysis_by_feature(X_test, i, True, "test")).cols(2)
+                train_plot = (
+                    train_plot
+                    + self._residual_analysis_by_feature(X_test, i, True, "test")
+                ).cols(2)
                 plots_dict[i] = [train_plot]
             else:
                 plots_dict[i] = train_plot
@@ -777,13 +895,20 @@ class ModelInterpretation:
             df_bool.rename(columns={"level_1": "categorical"}, inplace=True)
             df_bool = df_bool.merge(X["errorbucket_label"].reset_index(), on="index")
             df_bool.drop(["index"], axis=1, inplace=True)
-            train_plot = self._residual_analysis_by_feature(df_bool, "categorical", True)
+            train_plot = self._residual_analysis_by_feature(
+                df_bool, "categorical", True
+            )
             if self.has_test and self.x_test is not None:
                 df_test_bool.rename(columns={"level_1": "categorical"}, inplace=True)
-                df_test_bool = df_test_bool.merge(X_test["errorbucket_label"].reset_index(), on="index")
+                df_test_bool = df_test_bool.merge(
+                    X_test["errorbucket_label"].reset_index(), on="index"
+                )
                 df_test_bool.drop(["index"], axis=1, inplace=True)
                 train_plot = (
-                    train_plot + self._residual_analysis_by_feature(df_test_bool, "categorical", True, "test")
+                    train_plot
+                    + self._residual_analysis_by_feature(
+                        df_test_bool, "categorical", True, "test"
+                    )
                 ).cols(2)
                 plots_dict["categorical"] = [train_plot]
             else:
@@ -792,7 +917,9 @@ class ModelInterpretation:
 
     # @fail_gracefully(_LOGGER)
     def get_error_drivers(self):
+        """Gets the error drivers."""
         from tigerml.eda import Analyser
+
         # if self.erroranalysis_cols is None:
         #     self.set_errorbuckets_spec()
         x_cols = self.erroranalysis_cols
@@ -805,16 +932,16 @@ class ModelInterpretation:
             an_test = Analyser(df_test, y="residuals")
         bivariate_plot = {}
         for i in range(len(x_cols)):
-            train_plot = an_train.bivariate_plots(x_vars=x_cols[i], y_vars="residuals").opts(
-                xlabel=f"{x_cols[i]}(train)", width=500
-            )
+            train_plot = an_train.bivariate_plots(
+                x_vars=x_cols[i], y_vars="residuals"
+            ).opts(xlabel=f"{x_cols[i]}(train)", width=500)
 
             if self.has_test and self.x_test is not None:
                 train_plot = (
                     train_plot
-                    + an_test.bivariate_plots(x_vars=x_cols[i], y_vars="residuals").opts(
-                        xlabel=f"{x_cols[i]}(test)", width=500
-                    )
+                    + an_test.bivariate_plots(
+                        x_vars=x_cols[i], y_vars="residuals"
+                    ).opts(xlabel=f"{x_cols[i]}(test)", width=500)
                 ).cols(2)
                 bivariate_plot[x_cols[i]] = [train_plot]
             else:
@@ -824,7 +951,8 @@ class ModelInterpretation:
     # @fail_gracefully(_LOGGER)
     def _get_shap_intro(self):
         """
-        # to be used in error analysis section:
+        # To be used in error analysis section.
+
             plots_dict["error_analysis"]["from_shap"] = {"shap_introduction": [self.get_shap_intro()]}
         """
         shap_intro = """
@@ -857,6 +985,7 @@ class ModelInterpretation:
 
     # @fail_gracefully(_LOGGER)
     def get_shap_error_analysis(self, test_plot=True):
+        """Gets the shap error analysis."""
         # if self.errorbucket_train is None:
         #     self.set_errorbuckets_spec(None)
         # if self.shap_explainer is None:
@@ -864,32 +993,46 @@ class ModelInterpretation:
         plots_dict = dict()
         X_train = sample_data(self.x_train, 1000)
         indices = X_train.index
-        if (self.errorbucket_train.isnull().sum() > 0):
-            _LOGGER.warning("SHAP Error Analysis: Ignoring {} observations in train data for error analysis where y=0".format(self.errorbucket_train.isnull().sum()))
+        if self.errorbucket_train.isnull().sum() > 0:
+            _LOGGER.warning(
+                "SHAP Error Analysis: Ignoring {} observations in train data for error analysis where y=0".format(
+                    self.errorbucket_train.isnull().sum()
+                )
+            )
         if self.has_test and test_plot:
             X_test = sample_data(self.x_test, 1000)
             test_indices = X_test.index
-            if (self.errorbucket_test.isnull().sum() > 0):
-                _LOGGER.warning("SHAP Error Analysis: Ignoring {} observations in test data for error analysis where y=0".format(self.errorbucket_test.isnull().sum()))
+            if self.errorbucket_test.isnull().sum() > 0:
+                _LOGGER.warning(
+                    "SHAP Error Analysis: Ignoring {} observations in test data for error analysis where y=0".format(
+                        self.errorbucket_test.isnull().sum()
+                    )
+                )
         for error_bucket in self.error_buckets:
             key_ = "shap_distribution_for_{}".format(error_bucket)
             plots_dict[key_] = {}
             fil_ = np.array(self.errorbucket_train.loc[indices] == error_bucket)
             train_key = "({} out of {})(train)".format(fil_.sum(), len(X_train))
-            if fil_.sum()>0:
-                shap_values = self._shap_score(X_train.loc[fil_], get_expected_value = False)
+            if fil_.sum() > 0:
+                shap_values = self._shap_score(
+                    X_train.loc[fil_], get_expected_value=False
+                )
                 plots_dict[key_][train_key] = self.shap_distribution(
-                    X_train.loc[fil_], shap_values)
+                    X_train.loc[fil_], shap_values
+                )
             else:
                 plots_dict[key_][train_key] = "No {}".format(error_bucket)
 
             if self.has_test and test_plot:
                 fil_ = np.array(self.errorbucket_test.loc[test_indices] == error_bucket)
                 test_key = "({} out of {})(test)".format(fil_.sum(), len(X_test))
-                if fil_.sum()>0:
-                    shap_values = self._shap_score(X_test.loc[fil_], get_expected_value = False)
+                if fil_.sum() > 0:
+                    shap_values = self._shap_score(
+                        X_test.loc[fil_], get_expected_value=False
+                    )
                     plots_dict[key_][test_key] = self.shap_distribution(
-                        X_test.loc[fil_], shap_values)
+                        X_test.loc[fil_], shap_values
+                    )
                 else:
                     plots_dict[key_][test_key] = "No {}".format(error_bucket)
 
@@ -903,6 +1046,7 @@ class ModelInterpretation:
 
     # @fail_gracefully(_LOGGER)
     def _get_shap_values_plot(self, X, features):
+        """Gets the shap values plot."""
         # if self.shap_explainer is None:
         #     self._shap_fit()
         shap_values, expected_value = self._shap_score(X, get_expected_value=True)
@@ -910,9 +1054,14 @@ class ModelInterpretation:
             cols_index = [X.columns.get_loc(c) for c in features]
             X = X[features]
             shap_values = shap_values[:, cols_index]
-        force_plot_div = shap.force_plot(expected_value, shap_values, X, show=False).data
+        force_plot_div = shap.force_plot(
+            expected_value, shap_values, X, show=False
+        ).data
         bundle_path = os.path.join(
-            os.path.abspath(shap.__file__).rsplit("__init__.py", maxsplit=1)[0], "plots", "resources", "bundle.js",
+            os.path.abspath(shap.__file__).rsplit("__init__.py", maxsplit=1)[0],
+            "plots",
+            "resources",
+            "bundle.js",
         )
         with open(bundle_path, "r", encoding="utf-8") as f:
             bundle_data = f.read()
@@ -921,6 +1070,7 @@ class ModelInterpretation:
 
     # @fail_gracefully(_LOGGER)
     def _get_dependence_plots_intro(self):
+        """Gets the dependence plots."""
         shap_interpretation = """
             <div class="left_align">
             <ul>
@@ -933,6 +1083,7 @@ class ModelInterpretation:
 
     # @fail_gracefully(_LOGGER)
     def get_dependence_plots(self, X=None, shap_values=None, features=None):
+        """Gets the shap dependence plots."""
         # if X is None or shap_values is None:  # for user api
         #     X, shap_values = self._get_X_and_shap_values(self.x_train)
         if features is None:
@@ -940,19 +1091,28 @@ class ModelInterpretation:
         plt.close("all")
         dependence_plots = {}
         for col in features:
-            shap.dependence_plot(col, shap_values, X, show=False, interaction_index=None)
+            shap.dependence_plot(
+                col, shap_values, X, show=False, interaction_index=None
+            )
             dependence_plots[col] = plt.gcf()
             plt.close("all")
         return dependence_plots
 
     @fail_gracefully(_LOGGER)
     def get_feature_importances(self, X, plot=True, n=20):
+        """Gets the shap feature importance."""
         vizer = ModelFeatureImportance(model=self.model)
-        feature_importances_, features_ = vizer._get_feature_importance(labels=X.columns)
+        feature_importances_, features_ = vizer._get_feature_importance(
+            labels=X.columns
+        )
         data = (
             td.DataFrame(feature_importances_)
             .set_index(features_)
-            .merge(td.DataFrame(X.abs().mean().rename("mean")), left_index=True, right_index=True,)
+            .merge(
+                td.DataFrame(X.abs().mean().rename("mean")),
+                left_index=True,
+                right_index=True,
+            )
         )
         if hasattr(self.model, "coef_"):
             feature_importances_ = data.iloc[:, 0].mul(data.iloc[:, 1]).to_numpy()
@@ -968,20 +1128,21 @@ class ModelInterpretation:
         else:
             return self.feature_importance
 
-    def _get_shap_plots(self, features, test_plot = False):
-        plots_dict = {}        
+    def _get_shap_plots(self, features, test_plot=False):
+        """Gets the shap plots."""
+        plots_dict = {}
         if test_plot & self.has_test:
             plots_dict["train"] = self._get_shap_values_plot(
-                X=sample_data(self.x_train,1000),
-                features=features,
+                X=sample_data(self.x_train, 1000), features=features,
             )
             plots_dict["test"] = self._get_shap_values_plot(
-                X=sample_data(self.x_test,1000),
-                features=features,
+                X=sample_data(self.x_test, 1000), features=features,
             )
             return plots_dict
         else:
-            return self._get_shap_values_plot(X=sample_data(self.x_train,1000), features=features)
+            return self._get_shap_values_plot(
+                X=sample_data(self.x_train, 1000), features=features
+            )
 
     # @fail_gracefully(_LOGGER)
     def _shap_fit(self):
@@ -998,7 +1159,9 @@ class ModelInterpretation:
         if self.model_type == MODEL_TYPES.kernel:
             model = deepcopy(self.model.predict)
         else:
-            model = deepcopy(self.model)  # deepcopy is required to avoid overwriting model object
+            model = deepcopy(
+                self.model
+            )  # deepcopy is required to avoid overwriting model object
 
         if "XGB" in str(type(self.model)):
             mybooster = model.get_booster()
@@ -1010,10 +1173,14 @@ class ModelInterpretation:
             mybooster.save_raw = myfun
             model = mybooster
             self.shap_explainer = SHAP_EXPLAINERS[self.model_type](model)
-            _LOGGER.info("\nData is not passed to ShapExplainer since it is an XGBoost model object.\n")
+            _LOGGER.info(
+                "\nData is not passed to ShapExplainer since it is an XGBoost model object.\n"
+            )
         else:
-            self.shap_explainer = SHAP_EXPLAINERS[self.model_type](model, sample_data(self.x_train, 100))
-        
+            self.shap_explainer = SHAP_EXPLAINERS[self.model_type](
+                model, sample_data(self.x_train, 100)
+            )
+
         # except Exception as e:
         #     self.error = e
         #     return None
@@ -1025,27 +1192,36 @@ class ModelInterpretation:
         try:  # using try catch to handle few common SHAPError
             shap_values = self.shap_explainer.shap_values(X)
         except shap.common.SHAPError:  # TODO: Kiran please verify - Tamal
-            shap_values = self.shap_explainer.shap_values(X, approximate=True, check_additivity=False)
+            shap_values = self.shap_explainer.shap_values(
+                X, approximate=True, check_additivity=False
+            )
         if len(shap_values) == 2:
             shap_values = shap_values[1]
         elif len(shap_values) > 1 and len(shap_values) != len(X):
             _LOGGER.info("Shap values have a shape of {}".format(len(shap_values)))
             shap_values = shap_values[1]
-        
+
         if get_expected_value:
             expected_value = self.shap_explainer.expected_value
             from collections.abc import Iterable
+
             if isinstance(expected_value, Iterable) and len(expected_value) > 1:
                 expected_value = expected_value[1]
             return shap_values, expected_value
 
         return shap_values
 
-
     # @fail_gracefully(_LOGGER)
-    def get_plots(self, include_shap=False, errorbuckets_spec=None, include_shap_test_error_analysis=False, n_features=20):
+    def get_plots(
+        self,
+        include_shap=False,
+        errorbuckets_spec=None,
+        include_shap_test_error_analysis=False,
+        n_features=20,
+    ):
+        """Gets the shap plots."""
         plots_dict = self.interpretations.copy()
-        if not(include_shap) or (self.report_option == 2):
+        if not (include_shap) or (self.report_option == 2):
             plots_dict = _clear_shap(plots_dict)
         elif self.report_option == 1:
             self._shap_fit()
@@ -1060,37 +1236,56 @@ class ModelInterpretation:
 
         if "feature_importance" in plots_dict.keys():
             if "from_model" in plots_dict["feature_importance"].keys():
-                plots_dict["feature_importance"]["from_model"] = self.get_feature_importances(self.x_train, n=n_features)
-            if 'from_shap' in plots_dict['feature_importance'].keys():
-                plots_dict['feature_importance']['from_shap'] = \
-                    {'feature_contributions': 
-                        self.shap_feature_contributions(X, shap_values=shap_values),
-                     'shap_value_distribution': 
-                     self.shap_distribution(X, shap_values=shap_values)
-                    }
+                plots_dict["feature_importance"][
+                    "from_model"
+                ] = self.get_feature_importances(self.x_train, n=n_features)
+            if "from_shap" in plots_dict["feature_importance"].keys():
+                plots_dict["feature_importance"]["from_shap"] = {
+                    "feature_contributions": self.shap_feature_contributions(
+                        X, shap_values=shap_values
+                    ),
+                    "shap_value_distribution": self.shap_distribution(
+                        X, shap_values=shap_values
+                    ),
+                }
 
-        if not(self.multi_class):
+        if not (self.multi_class):
             self.set_errorbuckets_spec(errorbuckets_spec)
         if "error_analysis" in plots_dict.keys():
             if "residual_analysis" in plots_dict["error_analysis"].keys():
-                if "errorbucket_profiles" in plots_dict["error_analysis"]["residual_analysis"].keys():
+                if (
+                    "errorbucket_profiles"
+                    in plots_dict["error_analysis"]["residual_analysis"].keys()
+                ):
                     plots_dict["error_analysis"]["residual_analysis"][
                         "errorbucket_profiles"
                     ] = self.get_errorbucket_profiles()
-                if "errorbucket_drivers" in plots_dict["error_analysis"]["residual_analysis"].keys():
-                    plots_dict["error_analysis"]["residual_analysis"]["errorbucket_drivers"] = self.get_error_drivers()
+                if (
+                    "errorbucket_drivers"
+                    in plots_dict["error_analysis"]["residual_analysis"].keys()
+                ):
+                    plots_dict["error_analysis"]["residual_analysis"][
+                        "errorbucket_drivers"
+                    ] = self.get_error_drivers()
             if "from_shap" in plots_dict["error_analysis"].keys():
-                plots_dict["error_analysis"]["from_shap"] = self.get_shap_error_analysis(
-                    test_plot = include_shap_test_error_analysis)
+                plots_dict["error_analysis"][
+                    "from_shap"
+                ] = self.get_shap_error_analysis(
+                    test_plot=include_shap_test_error_analysis
+                )
             if self.multi_class:
                 plots_dict["error_analysis"] = self._get_multiclass_residual_plots()
 
         if "shap_interpretation" in plots_dict.keys():
             cols = self._set_erroranalysis_cols_shap(shap_values)
-            plots_dict['shap_interpretation']["shap_values"] = self._get_shap_plots(
-                features = cols, test_plot = include_shap_test_error_analysis)
-            plots_dict['shap_interpretation']["dependence_plots_interpretation"] = [self._get_dependence_plots_intro()]
-            plots_dict['shap_interpretation']["dependence_plots"] = self.get_dependence_plots(X, shap_values=shap_values, features=cols)
-                
-        return plots_dict
+            plots_dict["shap_interpretation"]["shap_values"] = self._get_shap_plots(
+                features=cols, test_plot=include_shap_test_error_analysis
+            )
+            plots_dict["shap_interpretation"]["dependence_plots_interpretation"] = [
+                self._get_dependence_plots_intro()
+            ]
+            plots_dict["shap_interpretation"][
+                "dependence_plots"
+            ] = self.get_dependence_plots(X, shap_values=shap_values, features=cols)
 
+        return plots_dict

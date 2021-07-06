@@ -6,9 +6,13 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.utils.validation import check_array, check_is_fitted, check_X_y
 
 from .feature_eng import (
-    feature_engg_woe_binning_transform, feature_engg_woe_binning_wrapper,
-    get_num_cols, supervised_binning_fit, supervised_binning_transform,
-    unsupervised_binning)
+    feature_engg_woe_binning_transform,
+    feature_engg_woe_binning_wrapper,
+    get_num_cols,
+    supervised_binning_fit,
+    supervised_binning_transform,
+    unsupervised_binning,
+)
 
 
 def check_X(X, columns=None):
@@ -48,19 +52,17 @@ class WoeBinningTransformer(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    Columns 
+    Columns
 
     """
 
     def __init__(self, cols=None, encode="ordinal"):
         """Initialize Estimator."""
-
         self.cols = cols
         self.encode = encode
 
     def fit(self, X, y):
         """Build WOE based bin limits from the training set (X, y)."""
-
         valid_encode = ("onehot", "ordinal")
         if self.encode not in valid_encode:
             raise ValueError(
@@ -140,6 +142,7 @@ class WoeBinningTransformer(BaseEstimator, TransformerMixin):
         return self.fit(X, y).transform(X)
 
     def check_params(self, X, y):
+        """Checks if params are present."""
         if y is None:
             raise ValueError("Expected y or Y as second argument for method")
         if y.__array__().dtype == "object":
@@ -161,6 +164,7 @@ class WoeBinningTransformer(BaseEstimator, TransformerMixin):
         input_features : list of str of shape (n_features,)
             String names for input features if available. By default,
             "x0", "x1", ... "xn_features" is used.
+
         Returns
         -------
         output_feature_names : ndarray of shape (n_output_features,)
@@ -173,8 +177,8 @@ class WoeBinningTransformer(BaseEstimator, TransformerMixin):
 
 
 class UnsupervisedTransformer(BaseEstimator, TransformerMixin):
-    """Unsupervised binning using pd.cut
-    
+    """Unsupervised binning using pd.cut.
+
     Parameters
     ----------
     cols: `list`
@@ -243,8 +247,8 @@ class UnsupervisedTransformer(BaseEstimator, TransformerMixin):
 
 
 class SupervisedTransformer(BaseEstimator, TransformerMixin):
-    """Unsupervised binning using pd.cut
-    
+    """Unsupervised binning using pd.cut.
+
     Parameters
     ----------
     cols: `list`
@@ -305,6 +309,7 @@ class SupervisedTransformer(BaseEstimator, TransformerMixin):
         return X.values
 
     def fit_transform(self, X, y):
+        """Fit to data, then transform it."""
         return self.fit(X, y).transform(X)
 
     def _more_tags(self):
@@ -315,6 +320,7 @@ class SupervisedTransformer(BaseEstimator, TransformerMixin):
         }
 
     def check_params(self, X, y):
+        """Checks if params are present."""
         if y is None:
             raise ValueError("Expected y or Y as second argument for method")
         if y.__array__().dtype == "object":
