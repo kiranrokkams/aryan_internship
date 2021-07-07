@@ -124,6 +124,13 @@ def create_components(contents, flatten=False, format="html"):
             or type(content).__module__.startswith("bokeh")
             or type(content).__module__.startswith("plotly")
         ):
+			if content.data:
+	            for k, v in content.data.items():
+						if k[0] == "Overlay":
+							continue
+						print(k, type(v))
+
+						print("DATA:", v.dframe())
             if format == "html":
                 component = CLASSES[CHART_CLASS](content, name=content_name)
             else:
