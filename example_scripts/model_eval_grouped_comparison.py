@@ -5,7 +5,7 @@ from tigerml.model_eval import MultiModelComparisonRegression
 # Load the data
 # Download the csv file from following Google Drive location
 # https://drive.google.com/file/d/1ZQhtKQYmvOiRm2y33edOpjzipPFx4JYb
-results_df = pd.read_csv('../data/store_item_daily_predictions.csv', parse_dates=['date'])
+results_df = pd.read_csv('external_sources/script_data/store_item_daily_predictions.csv', parse_dates=['date'])
 results_df.info()
 # Make sure all the grouping columns are of str type
 # as it will increase visibility of all values on heatmap axis

@@ -1,0 +1,1006 @@
+START_SCRIPT_NAMEmodel_eval_grouped_comparison.pyEND_SCRIPT_NAME
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 809664 entries, 0 to 809663
+Data columns (total 5 columns):
+ #   Column     Non-Null Count   Dtype         
+---  ------     --------------   -----         
+ 0   store      809664 non-null  object        
+ 1   item       809664 non-null  int64         
+ 2   date       809664 non-null  datetime64[ns]
+ 3   actuals    809664 non-null  float64       
+ 4   predicted  809664 non-null  float64       
+dtypes: datetime64[ns](1), float64(2), int64(1), object(1)
+memory usage: 30.9+ MB
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('MAPE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('WMAPE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('MAE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('RMSE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.chart.Scatter'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('MAPE'), Dimension('MAE'), Dimension('store')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.chart.Scatter'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('WMAPE'), Dimension('RMSE'), Dimension('store')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('MAPE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('WMAPE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('MAE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('RMSE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.chart.Scatter'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('MAPE'), Dimension('MAE'), Dimension('item')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.chart.Scatter'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('WMAPE'), Dimension('RMSE'), Dimension('item')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('MAPE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('WMAPE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('MAE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('RMSE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.chart.Scatter'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('MAPE'), Dimension('MAE'), Dimension('store'), Dimension('item')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.chart.Scatter'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('WMAPE'), Dimension('RMSE'), Dimension('store'), Dimension('item')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.raster.HeatMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('item'), Dimension('store'), Dimension('MAPE')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.raster.HeatMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('item'), Dimension('store'), Dimension('WMAPE')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.raster.HeatMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('item'), Dimension('store'), Dimension('MAE')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.raster.HeatMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('item'), Dimension('store'), Dimension('RMSE')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Prediction Type'), Dimension('MAPE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Prediction Type'), Dimension('WMAPE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Prediction Type'), Dimension('MAE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Prediction Type'), Dimension('RMSE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Prediction Type'), Dimension('MAPE'), Dimension('MAE'), Dimension('store')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Prediction Type'), Dimension('WMAPE'), Dimension('RMSE'), Dimension('store')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Prediction Type'), Dimension('MAPE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Prediction Type'), Dimension('WMAPE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Prediction Type'), Dimension('MAE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Prediction Type'), Dimension('RMSE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Prediction Type'), Dimension('MAPE'), Dimension('MAE'), Dimension('item')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Prediction Type'), Dimension('WMAPE'), Dimension('RMSE'), Dimension('item')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Prediction Type'), Dimension('MAPE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Prediction Type'), Dimension('WMAPE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Prediction Type'), Dimension('MAE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Prediction Type'), Dimension('RMSE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Prediction Type'), Dimension('MAPE'), Dimension('MAE'), Dimension('store'), Dimension('item')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Prediction Type'), Dimension('WMAPE'), Dimension('RMSE'), Dimension('store'), Dimension('item')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.raster.HeatMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('item'), Dimension('store'), Dimension('MAPE')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.raster.HeatMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('item'), Dimension('store'), Dimension('WMAPE')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.raster.HeatMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('item'), Dimension('store'), Dimension('MAE')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.raster.HeatMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('item'), Dimension('store'), Dimension('RMSE')]
+END_DIMENSIONS
+
+
+START_SCRIPT_NAMEmodel_eval_classification_comparison_binary.pyEND_SCRIPT_NAME
+START_CLASS_NAME
+<class 'holoviews.core.spaces.HoloMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('decision_threshold'), Dimension('#'), Dimension('Actual_0'), Dimension('Actual_1')]
+END_DIMENSIONS
+  0%|          | 0/19 [00:00<?, ?it/s] 95%|█████████▍| 18/19 [00:00<00:00, 177.76it/s]                                                START_CLASS_NAME
+<class 'holoviews.core.overlay.Overlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('deciles'), Dimension('percent_targets_captured')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.Overlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('deciles'), Dimension('lift'), Dimension('x'), Dimension('y')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.Overlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('False Positive Rate'), Dimension('True Positive Rate')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.Overlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('recall'), Dimension('precision'), Dimension('x'), Dimension('y')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.Overlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('threshold'), Dimension('precision'), Dimension('recall'), Dimension('f1_score'), Dimension('% of Class 1')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.Overlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('threshold'), Dimension('precision'), Dimension('recall'), Dimension('f1_score'), Dimension('% of Class 1')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.chart.Bars'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('index'), Dimension('importance')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.chart.Bars'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('index'), Dimension('importance')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.spaces.HoloMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('decision_threshold'), Dimension('#'), Dimension('Actual_0'), Dimension('Actual_1')]
+END_DIMENSIONS
+  0%|          | 0/19 [00:00<?, ?it/s]100%|██████████| 19/19 [00:00<00:00, 187.44it/s]                                                START_CLASS_NAME
+<class 'holoviews.core.overlay.Overlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('deciles'), Dimension('percent_targets_captured')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.Overlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('deciles'), Dimension('lift'), Dimension('x'), Dimension('y')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.Overlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('False Positive Rate'), Dimension('True Positive Rate')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.Overlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('recall'), Dimension('precision'), Dimension('x'), Dimension('y')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.Overlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('threshold'), Dimension('precision'), Dimension('recall'), Dimension('f1_score'), Dimension('% of Class 1')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.Overlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('threshold'), Dimension('precision'), Dimension('recall'), Dimension('f1_score'), Dimension('% of Class 1')]
+END_DIMENSIONS
+
+
+START_SCRIPT_NAMEmodel_eval_classification_report_multiclass.pyEND_SCRIPT_NAME
+SHAP disabled as it is not applicable for the input provided
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('#'), Dimension('Actual_0'), Dimension('Actual_1'), Dimension('Actual_2')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('#'), Dimension('precision'), Dimension('recall'), Dimension('f1-score'), Dimension('support')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('index'), Dimension('Actual'), Dimension('Predicted')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.spaces.DynamicMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.spaces.DynamicMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.spaces.DynamicMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.spaces.DynamicMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.spaces.DynamicMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.spaces.DynamicMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.spaces.DynamicMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.chart.Bars'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('index'), Dimension('importance')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.chart.Bars'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Features'), Dimension('Variable'), Dimension('mean(|SHAP value|)')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('sepal length (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('sepal width (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('petal length (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('petal width (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('sepal length (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('sepal width (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('petal length (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('petal width (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('sepal length (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('sepal width (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('petal length (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('petal width (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('sepal length (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('sepal width (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('petal length (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('petal width (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('sepal length (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('sepal width (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('petal length (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('petal width (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('sepal length (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('sepal width (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('petal length (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Actual-Predicted'), Dimension('petal width (cm)'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('#'), Dimension('Actual_0'), Dimension('Actual_1'), Dimension('Actual_2')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('#'), Dimension('precision'), Dimension('recall'), Dimension('f1-score'), Dimension('support')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('index'), Dimension('Actual'), Dimension('Predicted')]
+END_DIMENSIONS
+
+
+START_SCRIPT_NAMEmodel_eval_regression_report.pyEND_SCRIPT_NAME
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('predicted'), Dimension('residuals'), Dimension('x'), Dimension('y')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('actuals'), Dimension('predicted')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('PTRATIO'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('INDUS'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('AGE'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('RAD'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('NOX'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('TAX'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('RM'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('B'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('LSTAT'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('DIS'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.chart.Bars'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('index'), Dimension('importance')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('predicted'), Dimension('residuals'), Dimension('x'), Dimension('y')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('actuals'), Dimension('predicted')]
+END_DIMENSIONS
+
+
+START_SCRIPT_NAMEmodel_eval_regression_comparison.pyEND_SCRIPT_NAME
+START_CLASS_NAME
+<class 'holoviews.core.overlay.Overlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('actuals'), Dimension('predicted')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Variable'), Dimension('value'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('actuals'), Dimension('predicted')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('predicted'), Dimension('residuals'), Dimension('x'), Dimension('y')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.chart.Bars'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('index'), Dimension('importance')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.chart.Bars'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('index'), Dimension('importance')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.Overlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('actuals'), Dimension('predicted')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.NdOverlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Variable'), Dimension('value'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('actuals'), Dimension('predicted')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('predicted'), Dimension('residuals'), Dimension('x'), Dimension('y')]
+END_DIMENSIONS
+
+
+START_SCRIPT_NAMEmodel_eval_classification_comparison_multiclass.pyEND_SCRIPT_NAME
+START_CLASS_NAME
+<class 'holoviews.element.tabular.Table'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('#'), Dimension('Actual_0'), Dimension('Actual_1'), Dimension('Actual_2')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.tabular.Table'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('#'), Dimension('Actual_0'), Dimension('Actual_1'), Dimension('Actual_2')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.tabular.Table'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('#'), Dimension('precision'), Dimension('recall'), Dimension('f1-score'), Dimension('support')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.tabular.Table'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('#'), Dimension('precision'), Dimension('recall'), Dimension('f1-score'), Dimension('support')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.Overlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('index'), Dimension('Actual'), Dimension('Predicted')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.Overlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('index'), Dimension('Actual'), Dimension('Predicted')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.chart.Bars'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Features'), Dimension('Variable'), Dimension('mean(|SHAP value|)')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.chart.Bars'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('Features'), Dimension('Variable'), Dimension('mean(|SHAP value|)')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.tabular.Table'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('#'), Dimension('Actual_0'), Dimension('Actual_1'), Dimension('Actual_2')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.tabular.Table'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('#'), Dimension('Actual_0'), Dimension('Actual_1'), Dimension('Actual_2')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.tabular.Table'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('#'), Dimension('precision'), Dimension('recall'), Dimension('f1-score'), Dimension('support')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.tabular.Table'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('#'), Dimension('precision'), Dimension('recall'), Dimension('f1-score'), Dimension('support')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.Overlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('index'), Dimension('Actual'), Dimension('Predicted')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.overlay.Overlay'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('index'), Dimension('Actual'), Dimension('Predicted')]
+END_DIMENSIONS
+
+
+START_SCRIPT_NAMEmodel_eval_classification_report_binary.pyEND_SCRIPT_NAME
+START_CLASS_NAME
+<class 'holoviews.core.spaces.HoloMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('decision_threshold'), Dimension('metric'), Dimension('test'), Dimension('train')]
+END_DIMENSIONS
+  0%|          | 0/19 [00:00<?, ?it/s]                                      START_CLASS_NAME
+<class 'holoviews.core.spaces.HoloMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('decision_threshold'), Dimension('#'), Dimension('Actual_0'), Dimension('Actual_1')]
+END_DIMENSIONS
+  0%|          | 0/19 [00:00<?, ?it/s]100%|██████████| 19/19 [00:00<00:00, 182.33it/s]                                                START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('deciles'), Dimension('percent_targets_captured')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('deciles'), Dimension('lift'), Dimension('x'), Dimension('y')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('False Positive Rate'), Dimension('True Positive Rate')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('recall'), Dimension('precision'), Dimension('x'), Dimension('y')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('threshold'), Dimension('precision'), Dimension('recall'), Dimension('f1_score'), Dimension('% of Class 1')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('mean perimeter'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('mean radius'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('mean texture'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('texture error'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('mean area'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('worst area'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('area error'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('worst texture'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('worst radius'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('worst perimeter'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.element.chart.Bars'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('index'), Dimension('importance')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.spaces.HoloMap'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('decision_threshold'), Dimension('#'), Dimension('Actual_0'), Dimension('Actual_1')]
+END_DIMENSIONS
+  0%|          | 0/19 [00:00<?, ?it/s] 95%|█████████▍| 18/19 [00:00<00:00, 175.00it/s]                                                START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('deciles'), Dimension('percent_targets_captured')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('deciles'), Dimension('lift'), Dimension('x'), Dimension('y')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('False Positive Rate'), Dimension('True Positive Rate')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('recall'), Dimension('precision'), Dimension('x'), Dimension('y')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('threshold'), Dimension('precision'), Dimension('recall'), Dimension('f1_score'), Dimension('% of Class 1')]
+END_DIMENSIONS
+
+

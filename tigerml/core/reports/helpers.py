@@ -124,13 +124,14 @@ def create_components(contents, flatten=False, format="html"):
             or type(content).__module__.startswith("bokeh")
             or type(content).__module__.startswith("plotly")
         ):
-			if content.data:
-	            for k, v in content.data.items():
-						if k[0] == "Overlay":
-							continue
-						print(k, type(v))
+            # TODO: remove this, only used for exploring chart classes
+            print("START_CLASS_NAME")
+            print(type(content))
+            print("END_CLASS_NAME")
+            print("START_DIMENSIONS")
+            print(content.dimensions())
+            print("END_DIMENSIONS")
 
-						print("DATA:", v.dframe())
             if format == "html":
                 component = CLASSES[CHART_CLASS](content, name=content_name)
             else:
@@ -158,7 +159,7 @@ def create_components(contents, flatten=False, format="html"):
             component = CLASSES[IMAGE_CLASS](content, name=content_name)
             needs_folder = True
         # if isinstance(component, list):
-        # 	components += component
+        #     components += component
         # else:
         if component is not None:
             components.append(component)
