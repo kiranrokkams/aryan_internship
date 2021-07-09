@@ -284,7 +284,7 @@ END_CLASS_NAME
 START_DIMENSIONS
 [Dimension('decision_threshold'), Dimension('#'), Dimension('Actual_0'), Dimension('Actual_1')]
 END_DIMENSIONS
-  0%|          | 0/19 [00:00<?, ?it/s] 95%|█████████▍| 18/19 [00:00<00:00, 177.76it/s]                                                START_CLASS_NAME
+  0%|          | 0/19 [00:00<?, ?it/s] 95%|█████████▍| 18/19 [00:00<00:00, 175.56it/s]                                                START_CLASS_NAME
 <class 'holoviews.core.overlay.Overlay'>
 END_CLASS_NAME
 START_DIMENSIONS
@@ -338,7 +338,7 @@ END_CLASS_NAME
 START_DIMENSIONS
 [Dimension('decision_threshold'), Dimension('#'), Dimension('Actual_0'), Dimension('Actual_1')]
 END_DIMENSIONS
-  0%|          | 0/19 [00:00<?, ?it/s]100%|██████████| 19/19 [00:00<00:00, 187.44it/s]                                                START_CLASS_NAME
+  0%|          | 0/19 [00:00<?, ?it/s]100%|██████████| 19/19 [00:00<00:00, 185.87it/s]                                                START_CLASS_NAME
 <class 'holoviews.core.overlay.Overlay'>
 END_CLASS_NAME
 START_DIMENSIONS
@@ -631,37 +631,7 @@ START_CLASS_NAME
 <class 'holoviews.core.layout.Layout'>
 END_CLASS_NAME
 START_DIMENSIONS
-[Dimension('errorbucket_label'), Dimension('PTRATIO'), Dimension('Density')]
-END_DIMENSIONS
-START_CLASS_NAME
-<class 'holoviews.core.layout.Layout'>
-END_CLASS_NAME
-START_DIMENSIONS
-[Dimension('errorbucket_label'), Dimension('INDUS'), Dimension('Density')]
-END_DIMENSIONS
-START_CLASS_NAME
-<class 'holoviews.core.layout.Layout'>
-END_CLASS_NAME
-START_DIMENSIONS
 [Dimension('errorbucket_label'), Dimension('AGE'), Dimension('Density')]
-END_DIMENSIONS
-START_CLASS_NAME
-<class 'holoviews.core.layout.Layout'>
-END_CLASS_NAME
-START_DIMENSIONS
-[Dimension('errorbucket_label'), Dimension('RAD'), Dimension('Density')]
-END_DIMENSIONS
-START_CLASS_NAME
-<class 'holoviews.core.layout.Layout'>
-END_CLASS_NAME
-START_DIMENSIONS
-[Dimension('errorbucket_label'), Dimension('NOX'), Dimension('Density')]
-END_DIMENSIONS
-START_CLASS_NAME
-<class 'holoviews.core.layout.Layout'>
-END_CLASS_NAME
-START_DIMENSIONS
-[Dimension('errorbucket_label'), Dimension('TAX'), Dimension('Density')]
 END_DIMENSIONS
 START_CLASS_NAME
 <class 'holoviews.core.layout.Layout'>
@@ -673,13 +643,43 @@ START_CLASS_NAME
 <class 'holoviews.core.layout.Layout'>
 END_CLASS_NAME
 START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('LSTAT'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('TAX'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('INDUS'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('PTRATIO'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('NOX'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
 [Dimension('errorbucket_label'), Dimension('B'), Dimension('Density')]
 END_DIMENSIONS
 START_CLASS_NAME
 <class 'holoviews.core.layout.Layout'>
 END_CLASS_NAME
 START_DIMENSIONS
-[Dimension('errorbucket_label'), Dimension('LSTAT'), Dimension('Density')]
+[Dimension('errorbucket_label'), Dimension('RAD'), Dimension('Density')]
 END_DIMENSIONS
 START_CLASS_NAME
 <class 'holoviews.core.layout.Layout'>
@@ -870,7 +870,7 @@ END_CLASS_NAME
 START_DIMENSIONS
 [Dimension('decision_threshold'), Dimension('#'), Dimension('Actual_0'), Dimension('Actual_1')]
 END_DIMENSIONS
-  0%|          | 0/19 [00:00<?, ?it/s]100%|██████████| 19/19 [00:00<00:00, 182.33it/s]                                                START_CLASS_NAME
+  0%|          | 0/19 [00:00<?, ?it/s]100%|██████████| 19/19 [00:00<00:00, 184.48it/s]                                                START_CLASS_NAME
 <class 'holoviews.core.layout.Layout'>
 END_CLASS_NAME
 START_DIMENSIONS
@@ -910,25 +910,19 @@ START_CLASS_NAME
 <class 'holoviews.core.layout.Layout'>
 END_CLASS_NAME
 START_DIMENSIONS
-[Dimension('errorbucket_label'), Dimension('mean radius'), Dimension('Density')]
-END_DIMENSIONS
-START_CLASS_NAME
-<class 'holoviews.core.layout.Layout'>
-END_CLASS_NAME
-START_DIMENSIONS
 [Dimension('errorbucket_label'), Dimension('mean texture'), Dimension('Density')]
 END_DIMENSIONS
 START_CLASS_NAME
 <class 'holoviews.core.layout.Layout'>
 END_CLASS_NAME
 START_DIMENSIONS
-[Dimension('errorbucket_label'), Dimension('texture error'), Dimension('Density')]
+[Dimension('errorbucket_label'), Dimension('area error'), Dimension('Density')]
 END_DIMENSIONS
 START_CLASS_NAME
 <class 'holoviews.core.layout.Layout'>
 END_CLASS_NAME
 START_DIMENSIONS
-[Dimension('errorbucket_label'), Dimension('mean area'), Dimension('Density')]
+[Dimension('errorbucket_label'), Dimension('mean radius'), Dimension('Density')]
 END_DIMENSIONS
 START_CLASS_NAME
 <class 'holoviews.core.layout.Layout'>
@@ -940,7 +934,13 @@ START_CLASS_NAME
 <class 'holoviews.core.layout.Layout'>
 END_CLASS_NAME
 START_DIMENSIONS
-[Dimension('errorbucket_label'), Dimension('area error'), Dimension('Density')]
+[Dimension('errorbucket_label'), Dimension('texture error'), Dimension('Density')]
+END_DIMENSIONS
+START_CLASS_NAME
+<class 'holoviews.core.layout.Layout'>
+END_CLASS_NAME
+START_DIMENSIONS
+[Dimension('errorbucket_label'), Dimension('worst perimeter'), Dimension('Density')]
 END_DIMENSIONS
 START_CLASS_NAME
 <class 'holoviews.core.layout.Layout'>
@@ -958,7 +958,7 @@ START_CLASS_NAME
 <class 'holoviews.core.layout.Layout'>
 END_CLASS_NAME
 START_DIMENSIONS
-[Dimension('errorbucket_label'), Dimension('worst perimeter'), Dimension('Density')]
+[Dimension('errorbucket_label'), Dimension('mean area'), Dimension('Density')]
 END_DIMENSIONS
 START_CLASS_NAME
 <class 'holoviews.element.chart.Bars'>
@@ -972,7 +972,7 @@ END_CLASS_NAME
 START_DIMENSIONS
 [Dimension('decision_threshold'), Dimension('#'), Dimension('Actual_0'), Dimension('Actual_1')]
 END_DIMENSIONS
-  0%|          | 0/19 [00:00<?, ?it/s] 95%|█████████▍| 18/19 [00:00<00:00, 175.00it/s]                                                START_CLASS_NAME
+  0%|          | 0/19 [00:00<?, ?it/s]100%|██████████| 19/19 [00:00<00:00, 185.72it/s]                                                START_CLASS_NAME
 <class 'holoviews.core.layout.Layout'>
 END_CLASS_NAME
 START_DIMENSIONS
