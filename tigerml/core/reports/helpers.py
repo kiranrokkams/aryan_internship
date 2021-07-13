@@ -124,19 +124,34 @@ def create_components(contents, flatten=False, format="html"):
             or type(content).__module__.startswith("bokeh")
             or type(content).__module__.startswith("plotly")
         ):
-            # TODO: remove this, only used for exploring chart classes
-            print("START_CLASS_NAME")
-            print(type(content))
-            print("END_CLASS_NAME")
-            print("START_DIMENSIONS")
-            print(content.dimensions())
-            print("END_DIMENSIONS")
+            # used for exploring chart classes
+            # print("START_CLASS_NAME")
+            # print(type(content))
+            # print("END_CLASS_NAME")
+            # print("START_DIMENSIONS")
+            # print(content.dimensions())
+            # print("END_DIMENSIONS")
 
             if format == "html":
                 component = CLASSES[CHART_CLASS](content, name=content_name)
             else:
                 component = CLASSES[IMAGE_CLASS](content, name=content_name)
                 needs_folder = True
+
+                components.append(component)
+
+                dimensions = content.dimensions()
+                plot_data = []
+                plot_labels = []
+
+                for dimension in dimensions:
+                    plot_data.append(content.dimension_values(dimension))
+                    plot_labels.append(dimension.label)
+
+                plot_df = pd.DataFrame(data=plot_data, index=plot_labels).transpose()
+                component = CLASSES[TABLE_CLASS](plot_df, title=content_name)
+
+
         elif isinstance(content, Iterable):
             if flatten:
                 component = create_components(content, flatten=True, format=format)
