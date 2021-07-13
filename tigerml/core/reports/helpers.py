@@ -151,7 +151,6 @@ def create_components(contents, flatten=False, format="html"):
                 plot_df = pd.DataFrame(data=plot_data, index=plot_labels).transpose()
                 component = CLASSES[TABLE_CLASS](plot_df, title=content_name)
 
-
         elif isinstance(content, Iterable):
             if flatten:
                 component = create_components(content, flatten=True, format=format)
