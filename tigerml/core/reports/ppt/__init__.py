@@ -6,11 +6,9 @@ except ModuleNotFoundError as e:
         "reports. - conda install python-pptx"
     )
     raise e
+
 from tigerml.core.utils import slugify
 
-from .lib import create_ppt_report
-from .Report import PptReport, Section
-from .Slide import Slide, SlideComponent
 
 prs = pptx.Presentation()
 
@@ -26,3 +24,8 @@ class slide_layouts:
 
 
 layouts = slide_layouts()
+
+# there is a circular import going on here, maybe move layouts to a separate class
+from .lib import create_ppt_report
+from .Report import PptReport, Section
+from .Slide import Slide, SlideComponent

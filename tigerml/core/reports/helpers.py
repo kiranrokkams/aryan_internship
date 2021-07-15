@@ -69,6 +69,17 @@ def get_component_classes(format):
             COMPONENT_CLASS: tre.ExcelComponent,
             CG_CLASS: tre.ExcelComponentGroup,
         }
+    elif format == "pptx":
+        import tigerml.core.reports.ppt as trp
+
+        return {
+            TABLE_CLASS: trp.PptTable,
+            CHART_CLASS: trp.PptChart,
+            IMAGE_CLASS: trp.PptImage,
+            TEXT_CLASS: trp.PptText,
+            COMPONENT_CLASS: trp.PptComponent,
+            CG_CLASS: trp.PptComponentGroup,
+        }
     else:
         raise Exception("Given format not recognised - {}".format(format))
 
@@ -84,7 +95,7 @@ def enforce_iterable(input):
 def create_components(contents, flatten=False, format="html"):
     import tigerml.core.reports as tr
 
-    assert format in ["html", "xlsx"]
+    assert format in ["html", "xlsx", "pptx"]
     CLASSES = get_component_classes(format)
     components = []
     needs_folder = False
@@ -108,7 +119,7 @@ def create_components(contents, flatten=False, format="html"):
             if format == "html":
                 component = tr.html.HTMLBase(content)
             else:
-                Warning("Passed an HTML component for Excel report. Skipping it.")
+                Warning("Passed an HTML component for non-HTML report. Skipping it.")
                 component = None
         elif isinstance(content, pd.DataFrame) or isinstance(content, Styler):
             component = CLASSES[TABLE_CLASS](content, title=content_name)

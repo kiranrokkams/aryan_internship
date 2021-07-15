@@ -1,8 +1,8 @@
 import pandas as pd
 from pandas.io.formats.style import Styler
+from pptx.slide import SlideLayout
 
 import tigerml
-from pptx.slide import SlideLayout
 from tigerml.core.dataframe.helpers import detigerify
 
 from ..contents.Component import Component
@@ -22,6 +22,8 @@ def wrap_content(content, content_name=""):
         content = content
     elif isinstance(content, pd.DataFrame) or isinstance(content, Styler):
         content = PptTable(content, title=content_name)
+    elif content.__module__.startswith("tigerml.core.reports.contents.Table"):
+        content = PptTable.from_parent(content)
     else:
         content = PptImage(content, name=content_name)
     return content

@@ -26,5 +26,6 @@ regRep = RegressionReport(
     yhat_test=yhat_test,
 )
 
-regRep.get_report(format=".html")
-regRep.get_report(format=".xlsx")
+# regRep.get_report(format=".html")
+# regRep.get_report(format=".xlsx")
+regRep.get_report(format=".pptx")
