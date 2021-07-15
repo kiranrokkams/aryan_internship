@@ -124,14 +124,6 @@ def create_components(contents, flatten=False, format="html"):
             or type(content).__module__.startswith("bokeh")
             or type(content).__module__.startswith("plotly")
         ):
-            # used for exploring chart classes
-            # print("START_CLASS_NAME")
-            # print(type(content))
-            # print("END_CLASS_NAME")
-            # print("START_DIMENSIONS")
-            # print(content.dimensions())
-            # print("END_DIMENSIONS")
-
             if format == "html":
                 component = CLASSES[CHART_CLASS](content, name=content_name)
             else:
