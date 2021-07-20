@@ -56,10 +56,14 @@ def group_components(components, dashboard, name="", columns=2, flatten=False):
     return cg
 
 
-def create_component_group(contents, dashboard, name="", columns=2, flatten=False):
+def create_component_group(
+    contents, dashboard, name="", columns=2, flatten=False, chart_options=None
+):
     from ..helpers import create_components
 
-    components = create_components(contents, flatten=flatten, format="xlsx")
+    components = create_components(
+        contents, flatten=flatten, format="xlsx", chart_options=chart_options
+    )
     cg = group_components(
         components, dashboard, name=name, columns=columns, flatten=flatten
     )

@@ -92,7 +92,7 @@ def enforce_iterable(input):
     return input
 
 
-def create_components(contents, flatten=False, format="html"):
+def create_components(contents, flatten=False, format="html", chart_options=None):
     import tigerml.core.reports as tr
 
     assert format in ["html", "xlsx", "pptx"]
@@ -137,31 +137,44 @@ def create_components(contents, flatten=False, format="html"):
         ):
             if format == "html":
                 component = CLASSES[CHART_CLASS](content, name=content_name)
-            elif format == "xlsx":
-                # add image and chart for excel
-                component = CLASSES[IMAGE_CLASS](content, name=content_name)
-                needs_folder = True
-
-                components.append(component)
-
-                dimensions = content.dimensions()
-                plot_data = []
-                plot_labels = []
-
-                for dimension in dimensions:
-                    plot_data.append(content.dimension_values(dimension))
-                    plot_labels.append(dimension.label)
-
-                plot_df = pd.DataFrame(data=plot_data, index=plot_labels).transpose()
-                component = CLASSES[TABLE_CLASS](plot_df, title=content_name)
             else:
-                # only add image for pptx/others
-                component = CLASSES[IMAGE_CLASS](content, name=content_name)
-                needs_folder = True
+                if chart_options is None:
+                    # default to image+table for excel
+                    if format == "xlsx":
+                        chart_options = {"generate_image": True, "generate_table": True}
+                    else:
+                        # only image for pptx
+                        chart_options = {
+                            "generate_image": True,
+                            "generate_table": False,
+                        }
+
+                if chart_options["generate_image"]:
+                    component = CLASSES[IMAGE_CLASS](content, name=content_name)
+                    needs_folder = True
+
+                    components.append(component)
+                    component = None
+
+                if chart_options["generate_table"]:
+                    dimensions = content.dimensions()
+                    plot_data = []
+                    plot_labels = []
+
+                    for dimension in dimensions:
+                        plot_data.append(content.dimension_values(dimension))
+                        plot_labels.append(dimension.label)
+
+                    plot_df = pd.DataFrame(
+                        data=plot_data, index=plot_labels
+                    ).transpose()
+                    component = CLASSES[TABLE_CLASS](plot_df, title=content_name)
 
         elif isinstance(content, Iterable):
             if flatten:
-                component = create_components(content, flatten=True, format=format)
+                component = create_components(
+                    content, flatten=True, format=format, chart_options=chart_options
+                )
                 if format == "html":
                     needs_folder_local = component[1]
                     component = component[0]
@@ -169,7 +182,12 @@ def create_components(contents, flatten=False, format="html"):
             else:
                 component = (
                     content_name,
-                    create_components(content, flatten=False, format=format),
+                    create_components(
+                        content,
+                        flatten=False,
+                        format=format,
+                        chart_options=chart_options,
+                    ),
                 )
                 if format == "html":
                     needs_folder_local = component[1][1]

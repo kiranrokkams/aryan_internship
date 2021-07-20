@@ -86,7 +86,9 @@ def group_components(components, dashboard, name="", columns=2, flatten=False):
     return final_cg
 
 
-def create_component_group(contents, dashboard, name="", columns=2, flatten=False):
+def create_component_group(
+    contents, dashboard, name="", columns=2, flatten=False, chart_options=None
+):
     from ..helpers import create_components
 
     needs_folder = False
@@ -94,7 +96,7 @@ def create_component_group(contents, dashboard, name="", columns=2, flatten=Fals
         components = [HTMLText(contents, name=dashboard.name)]
     else:
         components, needs_folder = create_components(
-            contents, flatten=flatten, format="html"
+            contents, flatten=flatten, format="html", chart_options=chart_options
         )
     # if len(contents) == 1:
     # 	columns = 1
