@@ -6,11 +6,11 @@ import tigerml
 from tigerml.core.dataframe.helpers import detigerify
 
 from ..contents.Component import Component
-from . import layouts
 from .contents.misc import PptText
 from .contents.PptChart import PptChart
 from .contents.PptImage import PptImage
 from .contents.PptTable import PptTable
+from .PptLayouts import layouts
 
 
 def wrap_content(content, content_name=""):
