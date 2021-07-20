@@ -137,7 +137,8 @@ def create_components(contents, flatten=False, format="html"):
         ):
             if format == "html":
                 component = CLASSES[CHART_CLASS](content, name=content_name)
-            else:
+            elif format == "xlsx":
+                # add image and chart for excel
                 component = CLASSES[IMAGE_CLASS](content, name=content_name)
                 needs_folder = True
 
@@ -153,6 +154,10 @@ def create_components(contents, flatten=False, format="html"):
 
                 plot_df = pd.DataFrame(data=plot_data, index=plot_labels).transpose()
                 component = CLASSES[TABLE_CLASS](plot_df, title=content_name)
+            else:
+                # only add image for pptx/others
+                component = CLASSES[IMAGE_CLASS](content, name=content_name)
+                needs_folder = True
 
         elif isinstance(content, Iterable):
             if flatten:
