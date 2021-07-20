@@ -92,6 +92,23 @@ def enforce_iterable(input):
     return input
 
 
+def extract_data_from_plot(plot):
+    if type(plot).__module__.startswith("holoviews"):
+        dimensions = plot.dimensions()
+        plot_data = []
+        plot_labels = []
+
+        for dimension in dimensions:
+            plot_data.append(plot.dimension_values(dimension))
+            plot_labels.append(dimension.label)
+
+        plot_df = pd.DataFrame(data=plot_data, index=plot_labels).transpose()
+        return plot_df
+    else:
+        Warning("Unable to extract data from " + str(type(plot)), " skipping table")
+        return None
+
+
 def create_components(contents, flatten=False, format="html", chart_options=None):
     import tigerml.core.reports as tr
 
@@ -157,18 +174,11 @@ def create_components(contents, flatten=False, format="html", chart_options=None
                     component = None
 
                 if chart_options["generate_table"]:
-                    dimensions = content.dimensions()
-                    plot_data = []
-                    plot_labels = []
-
-                    for dimension in dimensions:
-                        plot_data.append(content.dimension_values(dimension))
-                        plot_labels.append(dimension.label)
-
-                    plot_df = pd.DataFrame(
-                        data=plot_data, index=plot_labels
-                    ).transpose()
-                    component = CLASSES[TABLE_CLASS](plot_df, title=content_name)
+                    plot_df = extract_data_from_plot(content)
+                    if plot_df is not None:
+                        component = CLASSES[TABLE_CLASS](plot_df, title=content_name)
+                    else:
+                        component = None
 
         elif isinstance(content, Iterable):
             if flatten:
