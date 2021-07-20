@@ -558,7 +558,7 @@ class MultiModelComparisonRegression:
         report_name = "--".join(name_parts)
         return report_name
 
-    def get_report(self, file_path="", with_timestamp=False):
+    def get_report(self, file_path="", with_timestamp=False, format=".html"):
         """Generate html report."""
         if self.metrics_df is None:
             self.compute_metrics_all_groups()
@@ -566,4 +566,4 @@ class MultiModelComparisonRegression:
         report_element = {"Multiple Model Comparison - Regression": self.element_tree}
         if not file_path:
             file_path = self._generate_report_name(with_timestamp=with_timestamp)
-        create_report(report_element, name=file_path, format=".html")
+        create_report(report_element, name=file_path, format=format)

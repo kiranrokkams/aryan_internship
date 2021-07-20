@@ -6,9 +6,11 @@ from sklearn.ensemble import RandomForestClassifier
 from tigerml.model_eval import ClassificationComparison
 
 iris = load_iris()
-X = pd.DataFrame(iris['data'], columns=iris['feature_names'])
-y = iris['target']
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+X = pd.DataFrame(iris["data"], columns=iris["feature_names"])
+y = iris["target"]
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.33, random_state=42
+)
 
 # Model 1 - Logistic Regression
 lr = LogisticRegression(max_iter=10000)
@@ -22,9 +24,13 @@ yhat_test_rf = rf.predict_proba(X_test)
 
 # Option 1 - with model
 clsOpt1 = ClassificationComparison(y=y_test, models=[lr, rf], x=X_test)
-clsOpt1.get_report(file_path="Reports/ClassificationComparisonReport--Multi-class--report_option-1")
+clsOpt1.get_report(
+    file_path="Reports/ClassificationComparisonReport--Multi-class--report_option-1"
+)
 
 # Option 2 - without model
 yhats = {"Logistic Regression": yhat_test_lr, "Random Forest": yhat_test_rf}
 clsOpt2 = ClassificationComparison(y=y_test, yhats=yhats)
-clsOpt2.get_report(file_path="Reports/ClassificationComparisonReport--Multi-class--report_option-2")
+clsOpt2.get_report(
+    file_path="Reports/ClassificationComparisonReport--Multi-class--report_option-2"
+)

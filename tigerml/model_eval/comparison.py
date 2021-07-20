@@ -205,7 +205,7 @@ class MultiModelReport:
             shap_summ_plots[model_name] = [shap_fe]
         return shap_summ_plots
 
-    def _get_report(self, file_path="", cutoff_value=0.5):
+    def _get_report(self, file_path="", cutoff_value=0.5, format=".html"):
         """Generate a consolidate report having performance comparison of multiple models.
 
         Parameters
@@ -247,7 +247,7 @@ class MultiModelReport:
                 interpret_dict["feature_importances"] = self.feature_importances()
                 self.element_tree["interpretation"] = interpret_dict
 
-        create_report(self.element_tree, name=file_path, format=".html")
+        create_report(self.element_tree, name=file_path, format=format)
 
     def _build_full_comp_element_tree(self):
         self.element_tree = {}
@@ -394,7 +394,7 @@ class ClassificationComparison(MultiModelReport, ClassificationComparisonMixin):
             display_labels=display_labels,
         )
 
-    def get_report(self, file_path="", cutoff_value=0.5):
+    def get_report(self, file_path="", cutoff_value=0.5, format=".html"):
         """Generate a consolidate report of classification comparison for multiple models.
 
         Parameters
@@ -408,7 +408,9 @@ class ClassificationComparison(MultiModelReport, ClassificationComparisonMixin):
         if not file_path:
             file_path = f'classification_comparison_report_at_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
 
-        super()._get_report(file_path=file_path, cutoff_value=cutoff_value)
+        super()._get_report(
+            file_path=file_path, cutoff_value=cutoff_value, format=format
+        )
 
 
 class RegressionComparison(MultiModelReport, RegressionComparisonMixin):
@@ -480,7 +482,7 @@ class RegressionComparison(MultiModelReport, RegressionComparisonMixin):
             refit=refit,
         )
 
-    def get_report(self, file_path=""):
+    def get_report(self, file_path="", format=".html"):
         """Generate a consolidate report of regression comparison for multiple models.
 
         Parameters
@@ -492,4 +494,4 @@ class RegressionComparison(MultiModelReport, RegressionComparisonMixin):
         if not file_path:
             file_path = f'regression_comparison_report_at_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
 
-        super()._get_report(file_path=file_path)
+        super()._get_report(file_path=file_path, format=format)

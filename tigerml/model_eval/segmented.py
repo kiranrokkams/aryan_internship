@@ -180,7 +180,7 @@ def return_segmented_report(models, segment_by, is_classification):
             """Gets feature importances for Segmented model report class."""
             pass
 
-        def get_report(self, file_path=""):
+        def get_report(self, file_path="", format=".html"):
             """Gets report for Segmented model report class."""
             perf_dict = self.get_performance_report()
             interpret_dict = {}
@@ -193,7 +193,7 @@ def return_segmented_report(models, segment_by, is_classification):
                     f'{"classification" if self.is_classification else "regression"}'
                     f"_segmented_report_at_{time_now_readable()}"
                 )
-            create_report(report_dict, name=file_path, format=".html")
+            create_report(report_dict, name=file_path, format=format)
 
     if isinstance(models, dict):
         model = None
