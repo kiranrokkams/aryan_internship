@@ -27,5 +27,5 @@ regRep = RegressionReport(
 )
 
 # regRep.get_report(format=".html")
-# regRep.get_report(format=".xlsx")
-regRep.get_report(format=".pptx")
+regRep.get_report(format=".xlsx")
+# regRep.get_report(format=".pptx")
