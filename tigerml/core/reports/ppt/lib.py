@@ -1,6 +1,6 @@
 from tigerml.core.utils import time_now_readable
 
-from .PptLayouts import layouts
+from .pptlayouts import layouts
 from .Report import PptReport, Section
 from .Slide import Slide
 

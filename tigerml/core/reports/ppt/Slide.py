@@ -10,7 +10,7 @@ from .contents.misc import PptText
 from .contents.PptChart import PptChart
 from .contents.PptImage import PptImage
 from .contents.PptTable import PptTable
-from .PptLayouts import layouts
+from .pptlayouts import layouts
 
 
 def wrap_content(content, content_name=""):

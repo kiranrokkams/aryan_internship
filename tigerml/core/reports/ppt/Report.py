@@ -3,7 +3,7 @@ import pptx
 from tigerml.core.utils import check_or_create_path
 
 from .ContentGroup import ContentGroup
-from .PptLayouts import layouts
+from .pptlayouts import layouts
 from .Slide import Slide
 
 
