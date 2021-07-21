@@ -93,7 +93,9 @@ def enforce_iterable(input):
 
 
 def extract_data_from_plot(plot):
-    if type(plot).__module__.startswith("holoviews"):
+    if type(plot).__module__.startswith("holoviews") or type(
+        plot
+    ).__module__.startswith("hvplot"):
         dimensions = plot.dimensions()
         print("-" * 100)
         print("c", plot.dimensions(selection="constant"))
