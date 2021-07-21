@@ -9,8 +9,6 @@ import tigerml.core.dataframe as td
 from tigerml.core.dataframe.helpers import detigerify
 from tigerml.core.reports.contents import Table
 
-import json
-
 warnings.filterwarnings("ignore", category=BokehUserWarning)
 
 
@@ -97,7 +95,7 @@ def enforce_iterable(input):
 def extract_data_from_plot(plot):
     if type(plot).__module__.startswith("holoviews"):
         dimensions = plot.dimensions()
-        print("-"*100)
+        print("-" * 100)
         print("c", plot.dimensions(selection="constant"))
         print()
         print("k", plot.dimensions(selection="key"))
@@ -106,7 +104,7 @@ def extract_data_from_plot(plot):
         print()
         print("a", plot.dimensions(selection="all"))
         print()
-        print("-"*100)
+        print("-" * 100)
         plot_data = []
         plot_labels = []
 
