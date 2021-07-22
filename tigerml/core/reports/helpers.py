@@ -107,15 +107,18 @@ def extract_data_from_plot(plot):
         print("a", plot.dimensions(selection="all"))
         print()
         print("-" * 100)
-        plot_data = []
-        plot_labels = []
+
+        plot_data_by_size = {}
 
         for dimension in dimensions:
-            plot_data.append(plot.dimension_values(dimension))
-            plot_labels.append(dimension.label)
+            dimension_data = plot.dimension_values(dimension)
 
-        plot_df = pd.DataFrame(data=plot_data, index=plot_labels).transpose()
-        return plot_df
+            if len(dimension_data) not in dimension_data_by_size:
+                dimension_data_by_size[len(dimension_data)] = {}
+            dimension_data_by_size[len(dimension_data)][dimension.label] = dimension_data
+
+        plot_dfs = [pd.DataFrame(dimension_data_group) for size, dimension_data_group in plot_data_by_size]
+        return plot_dfs
     else:
         Warning("Unable to extract data from " + str(type(plot)), " skipping table")
         return None
