@@ -178,19 +178,19 @@ def create_components(contents, flatten=False, format="html", chart_options=None
                             "generate_table": False,
                         }
 
+                if chart_options["generate_table"]:
+                    plot_df = extract_data_from_plot(content)
+                    if plot_df is not None:
+                        component = CLASSES[TABLE_CLASS](plot_df, title=content_name)
+                        components.append(component)
+                    component = None
+
                 if chart_options["generate_image"]:
                     component = CLASSES[IMAGE_CLASS](content, name=content_name)
                     needs_folder = True
 
                     components.append(component)
                     component = None
-
-                if chart_options["generate_table"]:
-                    plot_df = extract_data_from_plot(content)
-                    if plot_df is not None:
-                        component = CLASSES[TABLE_CLASS](plot_df, title=content_name)
-                    else:
-                        component = None
 
         elif isinstance(content, Iterable):
             if flatten:
