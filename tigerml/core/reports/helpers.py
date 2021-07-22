@@ -108,16 +108,21 @@ def extract_data_from_plot(plot):
         print()
         print("-" * 100)
 
-        plot_data_by_size = {}
+        dimension_data_by_size = {}
 
         for dimension in dimensions:
             dimension_data = plot.dimension_values(dimension)
 
             if len(dimension_data) not in dimension_data_by_size:
                 dimension_data_by_size[len(dimension_data)] = {}
-            dimension_data_by_size[len(dimension_data)][dimension.label] = dimension_data
+            dimension_data_by_size[len(dimension_data)][
+                dimension.label
+            ] = dimension_data
 
-        plot_dfs = [pd.DataFrame(dimension_data_group) for size, dimension_data_group in plot_data_by_size]
+        plot_dfs = [
+            pd.DataFrame(dimension_data_group)
+            for size, dimension_data_group in dimension_data_by_size.items()
+        ]
         return plot_dfs
     else:
         Warning("Unable to extract data from " + str(type(plot)), " skipping table")
@@ -182,10 +187,13 @@ def create_components(contents, flatten=False, format="html", chart_options=None
                         }
 
                 if chart_options["generate_table"]:
-                    plot_df = extract_data_from_plot(content)
-                    if plot_df is not None:
-                        component = CLASSES[TABLE_CLASS](plot_df, title=content_name)
-                        components.append(component)
+                    plot_dfs = extract_data_from_plot(content)
+                    if plot_dfs is not None:
+                        for plot_df in plot_dfs:
+                            component = CLASSES[TABLE_CLASS](
+                                plot_df, title=content_name
+                            )
+                            components.append(component)
                     component = None
 
                 if chart_options["generate_image"]:
