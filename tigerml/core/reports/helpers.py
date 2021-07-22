@@ -97,16 +97,6 @@ def extract_data_from_plot(plot):
         plot
     ).__module__.startswith("hvplot"):
         dimensions = plot.dimensions()
-        print("-" * 100)
-        print("c", plot.dimensions(selection="constant"))
-        print()
-        print("k", plot.dimensions(selection="key"))
-        print()
-        print("v", plot.dimensions(selection="value"))
-        print()
-        print("a", plot.dimensions(selection="all"))
-        print()
-        print("-" * 100)
 
         dimension_data_by_size = {}
 
