@@ -26,7 +26,7 @@ yhat_test_rf = rf.predict_proba(X_test)
 clsOpt1 = ClassificationComparison(y=y_test, models=[lr, rf], x=X_test)
 clsOpt1.get_report(
     file_path="Reports/ClassificationComparisonReport--Binary-class--report_option-1",
-    format=".html",
+    format=".xlsx",
 )
 
 # Option 2 - without model
@@ -34,5 +34,5 @@ yhats = {"Logistic Regression": yhat_test_lr, "Random Forest": yhat_test_rf}
 clsOpt2 = ClassificationComparison(y=y_test, yhats=yhats)
 clsOpt2.get_report(
     file_path="Reports/ClassificationComparisonReport--Binary-class--report_option-2",
-    format=".html",
+    format=".xlsx",
 )

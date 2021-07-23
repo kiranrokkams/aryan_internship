@@ -21,7 +21,8 @@ regOpt1 = RegressionReport(
     y_train=y_train, x_train=X_train, x_test=X_test, y_test=y_test, model=reg
 )
 regOpt1.get_report(
-    file_path="Reports/RegressionReport--report_option-1", include_shap=True
+    file_path="Reports/RegressionReport--report_option-1", include_shap=True,
+    format=".xlsx"
 )
 
 # Option 2 - without model
@@ -33,4 +34,4 @@ regOpt2 = RegressionReport(
     yhat_train=yhat_train,
     yhat_test=yhat_test,
 )
-regOpt2.get_report(file_path="Reports/RegressionReport--report_option-2")
+regOpt2.get_report(file_path="Reports/RegressionReport--report_option-2", format=".xlsx")

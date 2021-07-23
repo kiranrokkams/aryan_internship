@@ -24,9 +24,9 @@ yhat_test_rf = rf.predict(X_test)
 
 # Option 1 - with model
 regOpt1 = RegressionComparison(y=y_test, models=[lr, rf], x=X_test)
-regOpt1.get_report(file_path="Reports/RegressionComparisonReport--report_option-1")
+regOpt1.get_report(file_path="Reports/RegressionComparisonReport--report_option-1", format=".xlsx")
 
 # Option 2 - without model
 yhats = {"Linear Regression": yhat_test_lr, "Random Forest": yhat_test_rf}
 regOpt2 = RegressionComparison(y=y_test, yhats=yhats)
-regOpt2.get_report(file_path="Reports/RegressionComparisonReport--report_option-2")
+regOpt2.get_report(file_path="Reports/RegressionComparisonReport--report_option-2", format=".xlsx")

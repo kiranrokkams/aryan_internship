@@ -22,7 +22,7 @@ mmcr = MultiModelComparisonRegression(
     y_true_col="actuals",
     y_pred_col="predicted",
 )
-mmcr.get_report(file_path="Reports/MultiModelComparisonReport--Regression")
+mmcr.get_report(file_path="Reports/MultiModelComparisonReport--Regression", format=".xlsx")
 
 # Create a dummy baseline predictions column
 np.random.seed(42)
@@ -39,5 +39,6 @@ mmcr2 = MultiModelComparisonRegression(
     y_base_col="baseline",
 )
 mmcr2.get_report(
-    file_path="Reports/MultiModelComparisonReport--Regression--with_Baseline"
+    file_path="Reports/MultiModelComparisonReport--Regression--with_Baseline",
+    format=".xlsx"
 )

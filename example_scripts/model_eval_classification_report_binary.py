@@ -23,6 +23,7 @@ clsOpt1 = ClassificationReport(
 clsOpt1.get_report(
     file_path="Reports/ClassificationReport--Binary-class--report_option-1",
     include_shap=True,
+    format=".xlsx"
 )
 
 # Option 2 - without model
@@ -35,5 +36,6 @@ clsOpt2 = ClassificationReport(
     yhat_test=yhat_test,
 )
 clsOpt2.get_report(
-    file_path="Reports/ClassificationReport--Binary-class--report_option-2"
+    file_path="Reports/ClassificationReport--Binary-class--report_option-2",
+    format=".xlsx"
 )
