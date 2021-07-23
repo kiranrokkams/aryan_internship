@@ -1,10 +1,10 @@
 def create_report(
-    contents, name="", path="", format=".html", split_sheets=True, tiger_template=False
+    contents, name="", path="", format=".html", split_sheets=True, tiger_template=False, columns=2
 ):
     if format == ".xlsx":
         from .excel import create_excel_report
 
-        create_excel_report(contents, name=name, path=path, split_sheets=split_sheets)
+        create_excel_report(contents, name=name, path=path, split_sheets=split_sheets, columns=columns)
     elif format == ".pptx":
         from .ppt.lib import create_ppt_report
 
@@ -12,4 +12,4 @@ def create_report(
     if format == ".html":
         from .html import create_html_report
 
-        create_html_report(contents, name=name, path=path, split_sheets=split_sheets)
+        create_html_report(contents, name=name, path=path, split_sheets=split_sheets, columns=columns)
