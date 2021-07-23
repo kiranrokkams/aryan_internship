@@ -1,4 +1,5 @@
 def title_html(text):
+    print("tth", text)
     return '<h3 class="component_title">{}</h3>'.format(text)
 
 
