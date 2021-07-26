@@ -96,7 +96,11 @@ def extract_data_from_plot(plot):
     if type(plot).__module__.startswith("holoviews") or type(
         plot
     ).__module__.startswith("hvplot"):
-        dimensions = plot.dimensions()
+        key_dimensions = set(plot.dimensions(selection="key"))
+        val_dimensions = set(plot.dimensions(selection="value"))
+        # filter to only include key or value dimensions
+        dimensions = [dimension for dimension in plot.dimensions(selection="all") if dimension in key_dimensions or dimension in val_dimensions]
+
 
         dimension_data_by_size = {}
 
@@ -218,6 +222,9 @@ def create_components(contents, flatten=False, format="html", chart_options=None
                     needs_folder = needs_folder or needs_folder_local
         elif content.__class__ in CLASSES.values():
             component = content
+        elif str(content.__module__) == "tigerml.core.reports.html.contents.HTMLTable":
+            table_component = Table(content.data, content.name, content.datatable)
+            component = CLASSES[TABLE_CLASS].from_parent(table_component)
         else:
             component = CLASSES[IMAGE_CLASS](content, name=content_name)
             needs_folder = True

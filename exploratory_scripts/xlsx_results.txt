@@ -14,28 +14,8 @@ memory usage: 30.9+ MB
 
 
 script: model_eval_classification_comparison_binary.py
-Traceback (most recent call last):
-  File "model_eval_classification_comparison_binary.py", line 27, in <module>
-    clsOpt1.get_report(
-  File "/Users/aryan/internship/aryan_internship/tigerml/model_eval/comparison.py", line 411, in get_report
-    super()._get_report(
-  File "/Users/aryan/internship/aryan_internship/tigerml/model_eval/comparison.py", line 250, in _get_report
-    create_report(self.element_tree, name=file_path, format=format)
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/lib.py", line 7, in create_report
-    create_excel_report(contents, name=name, path=path, split_sheets=split_sheets)
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/excel/lib.py", line 18, in create_excel_report
-    create_excel_dashboard(content, name=content_name, columns=columns)
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/excel/lib.py", line 29, in create_excel_dashboard
-    cg = create_component_group(contents, dash, columns=columns, flatten=flatten)
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/excel/lib.py", line 64, in create_component_group
-    components = create_components(
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/helpers.py", line 208, in create_components
-    create_components(
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/helpers.py", line 222, in create_components
-    component = CLASSES[IMAGE_CLASS](content, name=content_name)
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/contents/Image.py", line 92, in __init__
-    raise Exception(
-Exception: Unsupported input for Image creation - <class 'tigerml.core.reports.html.contents.HTMLTable.HTMLTable'>
+WARNING:param.Warning: Nesting Layouts within a HoloMap makes it difficult to access your data or control how it appears; we recommend calling .collate() on the HoloMap in order to follow the recommended nesting structure shown in the Composing Data user guide (https://goo.gl/2YS8LJ)
+WARNING:param.Warning: Nesting Layouts within a HoloMap makes it difficult to access your data or control how it appears; we recommend calling .collate() on the HoloMap in order to follow the recommended nesting structure shown in the Composing Data user guide (https://goo.gl/2YS8LJ)
 
 
 script: model_eval_classification_report_multiclass.py
@@ -48,53 +28,11 @@ script: model_eval_regression_report.py
 script: model_eval_regression_comparison.py
 `rcond` parameter will change to the default of machine precision times ``max(M, N)`` where M and N are the input matrix dimensions.
 To use the future default and silence this warning we advise to pass `rcond=None`, to keep using the old, explicitly pass `rcond=-1`.
-Traceback (most recent call last):
-  File "model_eval_regression_comparison.py", line 27, in <module>
-    regOpt1.get_report(file_path="Reports/RegressionComparisonReport--report_option-1", format=".xlsx")
-  File "/Users/aryan/internship/aryan_internship/tigerml/model_eval/comparison.py", line 497, in get_report
-    super()._get_report(file_path=file_path, format=format)
-  File "/Users/aryan/internship/aryan_internship/tigerml/model_eval/comparison.py", line 250, in _get_report
-    create_report(self.element_tree, name=file_path, format=format)
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/lib.py", line 7, in create_report
-    create_excel_report(contents, name=name, path=path, split_sheets=split_sheets)
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/excel/lib.py", line 18, in create_excel_report
-    create_excel_dashboard(content, name=content_name, columns=columns)
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/excel/lib.py", line 29, in create_excel_dashboard
-    cg = create_component_group(contents, dash, columns=columns, flatten=flatten)
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/excel/lib.py", line 64, in create_component_group
-    components = create_components(
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/helpers.py", line 208, in create_components
-    create_components(
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/helpers.py", line 222, in create_components
-    component = CLASSES[IMAGE_CLASS](content, name=content_name)
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/contents/Image.py", line 92, in __init__
-    raise Exception(
-Exception: Unsupported input for Image creation - <class 'tigerml.core.reports.html.contents.HTMLTable.HTMLTable'>
+`rcond` parameter will change to the default of machine precision times ``max(M, N)`` where M and N are the input matrix dimensions.
+To use the future default and silence this warning we advise to pass `rcond=None`, to keep using the old, explicitly pass `rcond=-1`.
 
 
 script: model_eval_classification_comparison_multiclass.py
-Traceback (most recent call last):
-  File "model_eval_classification_comparison_multiclass.py", line 27, in <module>
-    clsOpt1.get_report(
-  File "/Users/aryan/internship/aryan_internship/tigerml/model_eval/comparison.py", line 411, in get_report
-    super()._get_report(
-  File "/Users/aryan/internship/aryan_internship/tigerml/model_eval/comparison.py", line 250, in _get_report
-    create_report(self.element_tree, name=file_path, format=format)
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/lib.py", line 7, in create_report
-    create_excel_report(contents, name=name, path=path, split_sheets=split_sheets)
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/excel/lib.py", line 18, in create_excel_report
-    create_excel_dashboard(content, name=content_name, columns=columns)
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/excel/lib.py", line 29, in create_excel_dashboard
-    cg = create_component_group(contents, dash, columns=columns, flatten=flatten)
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/excel/lib.py", line 64, in create_component_group
-    components = create_components(
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/helpers.py", line 208, in create_components
-    create_components(
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/helpers.py", line 222, in create_components
-    component = CLASSES[IMAGE_CLASS](content, name=content_name)
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/contents/Image.py", line 92, in __init__
-    raise Exception(
-Exception: Unsupported input for Image creation - <class 'tigerml.core.reports.html.contents.HTMLTable.HTMLTable'>
 
 
 script: model_eval_classification_report_binary.py
