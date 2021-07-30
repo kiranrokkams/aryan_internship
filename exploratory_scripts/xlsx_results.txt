@@ -15,30 +15,7 @@ memory usage: 30.9+ MB
 
 script: model_eval_classification_comparison_binary.py
 WARNING:param.Warning: Nesting Layouts within a HoloMap makes it difficult to access your data or control how it appears; we recommend calling .collate() on the HoloMap in order to follow the recommended nesting structure shown in the Composing Data user guide (https://goo.gl/2YS8LJ)
-Traceback (most recent call last):
-  File "model_eval_classification_comparison_binary.py", line 27, in <module>
-    clsOpt1.get_report(
-  File "/Users/aryan/internship/aryan_internship/tigerml/model_eval/comparison.py", line 411, in get_report
-    super()._get_report(
-  File "/Users/aryan/internship/aryan_internship/tigerml/model_eval/comparison.py", line 250, in _get_report
-    create_report(self.element_tree, name=file_path, format=format)
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/lib.py", line 7, in create_report
-    create_excel_report(contents, name=name, path=path, split_sheets=split_sheets, columns=columns)
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/excel/lib.py", line 18, in create_excel_report
-    create_excel_dashboard(content, name=content_name, columns=columns)
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/excel/lib.py", line 29, in create_excel_dashboard
-    cg = create_component_group(contents, dash, columns=columns, flatten=flatten)
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/excel/lib.py", line 64, in create_component_group
-    components = create_components(
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/helpers.py", line 198, in create_components
-    component = CLASSES[TABLE_CLASS](
-  File "/Users/aryan/internship/aryan_internship/tigerml/core/reports/contents/Table.py", line 62, in __init__
-    self.styler = self.data.style
-  File "/Users/aryan/miniconda3/envs/ta-lib-dev/lib/python3.8/site-packages/pandas/core/frame.py", line 838, in style
-    return Styler(self)
-  File "/Users/aryan/miniconda3/envs/ta-lib-dev/lib/python3.8/site-packages/pandas/io/formats/style.py", line 145, in __init__
-    raise ValueError("style is not supported for non-unique indices.")
-ValueError: style is not supported for non-unique indices.
+WARNING:param.Warning: Nesting Layouts within a HoloMap makes it difficult to access your data or control how it appears; we recommend calling .collate() on the HoloMap in order to follow the recommended nesting structure shown in the Composing Data user guide (https://goo.gl/2YS8LJ)
 
 
 script: model_eval_classification_report_multiclass.py
