@@ -3,7 +3,9 @@ from tigerml.core.utils import time_now_readable
 from .Report import ExcelComponentGroup, ExcelDashboard, ExcelReport
 
 
-def create_excel_report(contents, columns=2, name="", path="", split_sheets=False, chart_options=None):
+def create_excel_report(
+    contents, columns=2, name="", path="", split_sheets=False, chart_options=None
+):
     if not name:
         name = "report_at_{}".format(time_now_readable())
     report = ExcelReport(name, file_path=path)
@@ -15,18 +17,29 @@ def create_excel_report(contents, columns=2, name="", path="", split_sheets=Fals
             else:
                 content_name = "Sheet1"
             report.append_dashboard(
-                create_excel_dashboard(content, name=content_name, columns=columns, chart_options=chart_options)
+                create_excel_dashboard(
+                    content,
+                    name=content_name,
+                    columns=columns,
+                    chart_options=chart_options,
+                )
             )
     else:
         report.append_dashboard(
-            create_excel_dashboard(contents, name="Sheet1", columns=columns, chart_options=chart_options)
+            create_excel_dashboard(
+                contents, name="Sheet1", columns=columns, chart_options=chart_options
+            )
         )
     report.save()
 
 
-def create_excel_dashboard(contents, name="", columns=2, flatten=False, chart_options=None):
+def create_excel_dashboard(
+    contents, name="", columns=2, flatten=False, chart_options=None
+):
     dash = ExcelDashboard(name=name)
-    cg = create_component_group(contents, dash, columns=columns, flatten=flatten, chart_options=chart_options)
+    cg = create_component_group(
+        contents, dash, columns=columns, flatten=flatten, chart_options=chart_options
+    )
     dash.append(cg)
     return dash
 
