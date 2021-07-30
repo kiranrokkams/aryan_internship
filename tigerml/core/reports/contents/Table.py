@@ -59,6 +59,10 @@ class Table:
                     pd.Index(data.index, name=data.index.names), inplace=True
                 )
             self.data = data
+
+            if self.data.columns.has_duplicates:
+                self.data = self.data.loc[:,~self.data.columns.duplicated()]
+
             self.styler = self.data.style
         elif isinstance(data, Styler):
             if isinstance(data.index, pd.MultiIndex):
