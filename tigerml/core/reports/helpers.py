@@ -107,7 +107,7 @@ def extract_data_from_plot(plot):
                 else:
                     key_dimensions = set(plot.dimensions(selection="key"))
                     val_dimensions = set(plot.dimensions(selection="value"))
-                    # filter to only include key or value dimensions
+                    # filter to only include key or value dimensions, others are irrelevant
                     dimensions = [
                         dimension
                         for dimension in plot.dimensions(selection="all")

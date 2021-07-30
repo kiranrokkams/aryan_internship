@@ -6,12 +6,13 @@ def create_report(
     split_sheets=True,
     tiger_template=False,
     columns=2,
+    chart_options=None
 ):
     if format == ".xlsx":
         from .excel import create_excel_report
 
         create_excel_report(
-            contents, name=name, path=path, split_sheets=split_sheets, columns=columns
+            contents, name=name, path=path, split_sheets=split_sheets, columns=columns, chart_options=chart_options
         )
     elif format == ".pptx":
         from .ppt.lib import create_ppt_report

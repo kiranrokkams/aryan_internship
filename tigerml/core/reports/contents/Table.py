@@ -60,6 +60,7 @@ class Table:
                 )
             self.data = data
 
+            # dataframe.style will raise an exception if we have duplicate columns
             if self.data.columns.has_duplicates:
                 self.data = self.data.loc[:, ~self.data.columns.duplicated()]
 
