@@ -96,27 +96,38 @@ def extract_data_from_plot(plot):
     if type(plot).__module__.startswith("holoviews") or type(
         plot
     ).__module__.startswith("hvplot"):
-        key_dimensions = set(plot.dimensions(selection="key"))
-        val_dimensions = set(plot.dimensions(selection="value"))
-        # filter to only include key or value dimensions
-        dimensions = [dimension for dimension in plot.dimensions(selection="all") if dimension in key_dimensions or dimension in val_dimensions]
+        plot_dfs = []
+
+        if isinstance(plot.data, pd.DataFrame):
+            plot_dfs.append(plot.data)
+        elif isinstance(plot.data, dict):
+            for k, v in plot.data.items():
+                if hasattr(v, "dframe"):
+                    plot_dfs.append(v.dframe())
+                else:
+                    key_dimensions = set(plot.dimensions(selection="key"))
+                    val_dimensions = set(plot.dimensions(selection="value"))
+                    # filter to only include key or value dimensions
+                    dimensions = [dimension for dimension in plot.dimensions(selection="all") if dimension in key_dimensions or dimension in val_dimensions]
 
 
-        dimension_data_by_size = {}
+                    dimension_data_by_size = {}
 
-        for dimension in dimensions:
-            dimension_data = plot.dimension_values(dimension)
+                    for dimension in dimensions:
+                        dimension_data = plot.dimension_values(dimension)
 
-            if len(dimension_data) not in dimension_data_by_size:
-                dimension_data_by_size[len(dimension_data)] = {}
-            dimension_data_by_size[len(dimension_data)][
-                dimension.label
-            ] = dimension_data
+                        if len(dimension_data) not in dimension_data_by_size:
+                            dimension_data_by_size[len(dimension_data)] = {}
+                        dimension_data_by_size[len(dimension_data)][
+                            dimension.label
+                        ] = dimension_data
 
-        plot_dfs = [
-            pd.DataFrame(dimension_data_group)
-            for size, dimension_data_group in dimension_data_by_size.items()
-        ]
+                    plot_dfs += [
+                        pd.DataFrame(dimension_data_group)
+                        for size, dimension_data_group in dimension_data_by_size.items()
+                    ]
+        else:
+            Warning("Unknown plot data type: " + str(type(plot.data)), " skipping")
         return plot_dfs
     else:
         Warning("Unable to extract data from " + str(type(plot)), " skipping table")

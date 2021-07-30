@@ -563,7 +563,8 @@ class MultiModelComparisonRegression:
         if self.metrics_df is None:
             self.compute_metrics_all_groups()
         self._create_report_elements()
-        report_element = {"Multiple Model Comparison - Regression": self.element_tree}
+        # report_element = {"Multiple Model Comparison - Regression": self.element_tree}
+        report_element = self.element_tree
         if not file_path:
             file_path = self._generate_report_name(with_timestamp=with_timestamp)
         create_report(report_element, name=file_path, format=format)

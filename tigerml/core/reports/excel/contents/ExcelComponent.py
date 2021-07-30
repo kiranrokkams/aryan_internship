@@ -21,9 +21,9 @@ class ExcelComponent(Component):
         """Saves content for Excel component class."""
         top_row = int(top_row)
         left_col = int(left_col)
-        if self.content.name:
-            write_title(self.content.name, worksheet, workbook, top_row, left_col, 5)
-            top_row += 1
+        # if self.content.name:
+        #     write_title(self.content.name, worksheet, workbook, top_row, left_col, 1)
+        #     top_row += 1
         if self.content.__module__.startswith("tigerml.core.reports.excel"):
             from tigerml.core.reports.excel import ExcelText
 
