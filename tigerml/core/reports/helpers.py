@@ -108,8 +108,11 @@ def extract_data_from_plot(plot):
                     key_dimensions = set(plot.dimensions(selection="key"))
                     val_dimensions = set(plot.dimensions(selection="value"))
                     # filter to only include key or value dimensions
-                    dimensions = [dimension for dimension in plot.dimensions(selection="all") if dimension in key_dimensions or dimension in val_dimensions]
-
+                    dimensions = [
+                        dimension
+                        for dimension in plot.dimensions(selection="all")
+                        if dimension in key_dimensions or dimension in val_dimensions
+                    ]
 
                     dimension_data_by_size = {}
 

@@ -61,7 +61,7 @@ class Table:
             self.data = data
 
             if self.data.columns.has_duplicates:
-                self.data = self.data.loc[:,~self.data.columns.duplicated()]
+                self.data = self.data.loc[:, ~self.data.columns.duplicated()]
 
             self.styler = self.data.style
         elif isinstance(data, Styler):

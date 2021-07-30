@@ -1,8 +1,9 @@
 import pandas as pd
 from sklearn.datasets import load_boston
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+
 from tigerml.model_eval import RegressionComparison
 
 boston = load_boston()
@@ -24,9 +25,13 @@ yhat_test_rf = rf.predict(X_test)
 
 # Option 1 - with model
 regOpt1 = RegressionComparison(y=y_test, models=[lr, rf], x=X_test)
-regOpt1.get_report(file_path="Reports/RegressionComparisonReport--report_option-1", format=".xlsx")
+regOpt1.get_report(
+    file_path="Reports/RegressionComparisonReport--report_option-1", format=".xlsx"
+)
 
 # Option 2 - without model
 yhats = {"Linear Regression": yhat_test_lr, "Random Forest": yhat_test_rf}
 regOpt2 = RegressionComparison(y=y_test, yhats=yhats)
-regOpt2.get_report(file_path="Reports/RegressionComparisonReport--report_option-2", format=".xlsx")
+regOpt2.get_report(
+    file_path="Reports/RegressionComparisonReport--report_option-2", format=".xlsx"
+)

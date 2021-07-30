@@ -19,7 +19,9 @@ with open("exploratory_scripts/xlsx_results.txt", "w") as resultfile:
         os.rename(old_dir, new_dir)
 
         # execute it and store results
-        result = subprocess.run(["python", scriptname], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        result = subprocess.run(
+            ["python", scriptname], stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
 
         print("generated output for:", scriptname)
         # add markers to show script names among various outputs to stdout

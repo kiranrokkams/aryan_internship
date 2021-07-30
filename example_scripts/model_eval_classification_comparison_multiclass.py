@@ -1,8 +1,9 @@
 import pandas as pd
 from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+
 from tigerml.model_eval import ClassificationComparison
 
 iris = load_iris()
@@ -26,7 +27,7 @@ yhat_test_rf = rf.predict_proba(X_test)
 clsOpt1 = ClassificationComparison(y=y_test, models=[lr, rf], x=X_test)
 clsOpt1.get_report(
     file_path="Reports/ClassificationComparisonReport--Multi-class--report_option-1",
-    format=".xlsx"
+    format=".xlsx",
 )
 
 # Option 2 - without model
@@ -34,5 +35,5 @@ yhats = {"Logistic Regression": yhat_test_lr, "Random Forest": yhat_test_rf}
 clsOpt2 = ClassificationComparison(y=y_test, yhats=yhats)
 clsOpt2.get_report(
     file_path="Reports/ClassificationComparisonReport--Multi-class--report_option-2",
-    format=".xlsx"
+    format=".xlsx",
 )
